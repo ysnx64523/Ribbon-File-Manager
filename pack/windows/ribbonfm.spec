@@ -1,54 +1,50 @@
 # -*- mode: python ; coding: utf-8 -*-
-# PyInstaller spec for RibbonFM on Windows (built in an MSYS2/mingw64 shell).
-#
-# Build:
-#   pyinstaller pack/windows/ribbonfm.spec
-#
-# Notes:
-#   - GTK3 must be installed in the MSYS2 mingw64 environment.
-#   - PyGObject needs the PyGObject "hooks" from pyinstaller-hooks-contrib;
-#     these are pulled in automatically for gi/Gtk when using the official
-#     PyGObject binary packages.
-#   - Because the app never runs elevated, the auxiliary privileged helper
-#     (see pack/windows/runas_helper.py) must be built/placed on PATH or it is
-#     simply not present (the app degrades gracefully).
+"""PyInstaller spec for a portable Windows build (bundles the GTK runtime).
 
-from PyInstaller.utils.hooks import collect_all
+Build with ``pack/windows/build_portable.py`` (MSYS2/mingw64). The GTK runtime is
+collected from the PyGObject hooks; the application resources (Glade UI, CSS,
+compiled .mo catalogs) are bundled as data.
+"""
+
+import os
+import sys
+from pathlib import Path
+
+from PyInstaller.utils.hooks import collect_all, collect_data_files
+
+# Repo root relative to this spec (SPECPATH == pack/windows).
+ROOT = Path(os.path.abspath(os.path.join(SPECPATH, "..", "..")))
+SRC = str(ROOT / "src")
+sys.path.insert(0, SRC)
 
 datas, binaries, hiddenimports = [], [], []
 
-# Pull in GTK/PyGObject data and binaries.
 for pkg in ("gi", "pygtkcompat"):
     d, b, h = collect_all(pkg)
     datas += d
     binaries += b
     hiddenimports += h
 
-# On Windows GIO ships a large set of modules; include them.
+# Application data: Glade UI, stylesheets, locale catalogs.
+datas += collect_data_files("ribbonfm", includes=["resources/**/*"])
+
 hiddenimports += [
-    "gi.overrides",
-    "gi.overrides.Gtk",
-    "gi.overrides.Gio",
-    "gi.overrides.Pango",
-    "gi.overrides.GdkPixbuf",
-    "gi.repository.Gtk",
-    "gi.repository.Gio",
-    "gi.repository.Gdk",
-    "gi.repository.Pango",
-    "gi.repository.GdkPixbuf",
-    "gi.repository.GLib",
+    "gi.overrides", "gi.overrides.Gtk", "gi.overrides.Gio",
+    "gi.overrides.Pango", "gi.overrides.GdkPixbuf",
+    "gi.repository.Gtk", "gi.repository.Gio", "gi.repository.Gdk",
+    "gi.repository.GdkPixbuf", "gi.repository.Pango", "gi.repository.GLib",
     "gi.repository.GObject",
 ]
 
 a = Analysis(
-    ["../src/ribbonfm/app.py"],
-    pathex=[],
+    [str(ROOT / "pack" / "windows" / "launcher.py")],
+    pathex=[SRC],
     binaries=binaries,
     datas=datas,
     hiddenimports=hiddenimports,
     hookspath=[],
     runtime_hooks=[],
-    excludes=[],
+    excludes=["tkinter", "unittest", "pytest"],
     noarchive=False,
 )
 
@@ -57,9 +53,8 @@ pyz = PYZ(a.pure)
 exe = EXE(
     pyz,
     a.scripts,
-    a.binaries,
-    a.datas,
     [],
+    exclude_binaries=True,
     name="RibbonFM",
     debug=False,
     bootloader_ignore_signals=False,
@@ -67,3 +62,5 @@ exe = EXE(
     upx=True,
     console=False,
 )
+
+coll = COLLECT(exe, a.binaries, a.datas, name="RibbonFM")

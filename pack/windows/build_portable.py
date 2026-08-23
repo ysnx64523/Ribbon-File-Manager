@@ -21,7 +21,7 @@ import sys
 import zipfile
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parent.parent
+ROOT = Path(__file__).resolve().parents[2]
 SPEC = ROOT / "pack" / "windows" / "ribbonfm.spec"
 APP_DIR = ROOT / "dist" / "RibbonFM"
 
