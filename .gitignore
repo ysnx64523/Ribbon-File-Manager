@@ -30,7 +30,7 @@ MANIFEST
 #   Usually these files are written by a python script from a template
 #   before PyInstaller builds the exe, so as to inject date/other infos into it.
 *.manifest
-*.spec
+
 # ...but the hand-authored specs under pack/ are meant to be committed.
 !pack/linux/*.spec
 !pack/windows/*.spec
