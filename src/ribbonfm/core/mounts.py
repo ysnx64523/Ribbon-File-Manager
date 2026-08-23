@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import os
 from dataclasses import dataclass
 from typing import Callable, Optional
 
@@ -72,7 +73,55 @@ def list_mounts() -> list[MountInfo]:
                 mounted=bool(mount),
             )
         )
+
+    # Fall back to real mount points (e.g. containers/minimal environments
+    # where Gio.VolumeMonitor reports no volumes) so the sidebar always shows
+    # actual disks.
+    for mp in _os_mount_points():
+        if mp in seen:
+            continue
+        seen.add(mp)
+        found.append(
+            MountInfo(
+                name=os.path.basename(mp) or mp,
+                path=mp,
+                uri="",
+                icon_name="drive-harddisk",
+                is_removable=False,
+                has_volume=False,
+                volume=None,
+                mounted=True,
+            )
+        )
     return found
+
+
+def _os_mount_points() -> list[str]:
+    """Real mount points from /proc/mounts, excluding pseudo filesystems."""
+    if not pathutils.IS_LINUX:
+        return []
+    skip = {
+        "proc", "sysfs", "devpts", "cgroup", "cgroup2", "pstore", "securityfs",
+        "debugfs", "tracefs", "configfs", "fusectl", "mqueue", "hugetlbfs",
+        "binfmt_misc", "rpc_pipefs", "devtmpfs", "bpf", "autofs", "squashfs",
+    }
+    out: list[str] = []
+    try:
+        with open("/proc/mounts", encoding="utf-8") as fh:
+            for line in fh:
+                parts = line.split()
+                if len(parts) < 3:
+                    continue
+                mp, fstype = parts[1], parts[2]
+                if fstype in skip:
+                    continue
+                if mp.startswith(("/proc", "/sys", "/dev", "/run")) and \
+                        fstype in ("tmpfs", "devtmpfs", "ramfs"):
+                    continue
+                out.append(mp)
+    except OSError:
+        pass
+    return out
 
 
 def mount_volume(info: MountInfo, on_done: Callable[[str, str], None]) -> None:

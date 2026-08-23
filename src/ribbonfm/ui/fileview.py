@@ -11,7 +11,7 @@ from __future__ import annotations
 import os
 from typing import Callable, Optional
 
-from gi.repository import Gtk, Gdk, Gio, GdkPixbuf, GLib, Pango
+from gi.repository import Gtk, Gdk, Gio, GdkPixbuf, GLib, GObject, Pango
 
 from .. import i18n
 from ..core import files
@@ -32,13 +32,18 @@ COL_CHECKED = 11
 
 _VIEW_KEYS = ("huge", "large", "medium", "small", "list", "details", "tiles", "content", "thumb")
 
-# icon-view modes -> item width (px)
-_ICON_WIDTHS = {"huge": 190, "large": 150, "medium": 130, "small": 100,
-                "tiles": 165, "thumb": 190}
+# modes that render icons (membership test for icon vs list views)
+_ICON_WIDTHS = {"huge", "large", "medium", "small", "tiles", "thumb"}
 
 _icon_cache: dict[str, str] = {}
-_pixbuf_cache: dict[str, GdkPixbuf.Pixbuf] = {}
-_ICON_PIX = 48
+_pixbuf_cache: dict[tuple, GdkPixbuf.Pixbuf] = {}
+
+# view mode -> icon pixel size (for genuine Ctrl+scroll zoom)
+_ICON_SIZES = {"huge": 72, "large": 48, "medium": 40, "small": 32,
+               "tiles": 56, "thumb": 72}
+# ascending order used by Ctrl+scroll (smaller -> bigger)
+_ZOOM_CYCLE = ["list", "details", "content", "small", "medium", "large",
+               "huge", "tiles"]
 
 
 def _icon_for(entry: files.FileEntry) -> str:
@@ -68,22 +73,22 @@ def _size_str(size: int) -> str:
     return format_size(size)
 
 
-def _icon_pixbuf(icon_name: str) -> Optional[GdkPixbuf.Pixbuf]:
+def _icon_pixbuf(icon_name: str, size: int) -> Optional[GdkPixbuf.Pixbuf]:
     icon_name = icon_name or "text-x-generic"
-    if icon_name in _pixbuf_cache:
-        return _pixbuf_cache[icon_name]
+    key = (icon_name, size)
+    if key in _pixbuf_cache:
+        return _pixbuf_cache[key]
     try:
         theme = Gtk.IconTheme.get_default()
         if theme.has_icon(icon_name):
-            pix = theme.load_icon(icon_name, _ICON_PIX,
-                                  Gtk.IconLookupFlags.FORCE_SIZE)
+            pix = theme.load_icon(icon_name, size, Gtk.IconLookupFlags.FORCE_SIZE)
         else:
-            pix = theme.load_icon("text-x-generic", _ICON_PIX,
+            pix = theme.load_icon("text-x-generic", size,
                                   Gtk.IconLookupFlags.FORCE_SIZE)
     except (GLib.Error, Exception):
         pix = None
     if pix is not None:
-        _pixbuf_cache[icon_name] = pix
+        _pixbuf_cache[key] = pix
     return pix
 
 
@@ -113,20 +118,23 @@ class FileView:
         self._show_hidden = False
         self._filter_text = ""
         self._suppress_sync = False
+        self._hide_set: set[str] = set()
+        self._show_ext = False
+        self._icon_size = _ICON_SIZES["large"]
 
         self._base = Gtk.ListStore(
-            str,          # COL_PATH
-            str,          # COL_NAME
-            str,          # COL_ICON
-            bool,         # COL_IS_DIR
-            int,          # COL_SIZE (raw bytes; formatted on render)
-            str,          # COL_TYPE
-            int,          # COL_MTIME (epoch; formatted on render)
-            str,          # COL_MODE
-            str,          # COL_OWNER
-            str,          # COL_GROUP
+            str,               # COL_PATH
+            str,               # COL_NAME
+            str,               # COL_ICON
+            bool,              # COL_IS_DIR
+            GObject.TYPE_INT64,  # COL_SIZE (raw bytes; 64-bit for big files)
+            str,               # COL_TYPE
+            GObject.TYPE_INT64,  # COL_MTIME (epoch; 64-bit)
+            str,               # COL_MODE
+            str,               # COL_OWNER
+            str,               # COL_GROUP
             GdkPixbuf.Pixbuf,  # COL_ICON_PIXBUF
-            bool,         # COL_CHECKED (selection checkbox)
+            bool,              # COL_CHECKED (selection checkbox)
         )
         self._sort = Gtk.TreeModelSort(model=self._base)
         self._sort.set_sort_func(COL_NAME, self._dirs_first, None)
@@ -150,6 +158,67 @@ class FileView:
         self._tree.get_selection().connect("changed", self._on_selection_changed)
 
         self._set_view(self._mode)
+
+        self._on_drop = None
+        self._enable_drag_drop()
+
+        # Ctrl + scroll wheel = zoom (icon size / layout), like Windows Explorer.
+        for view in (self._tree, self._icons):
+            view.connect("scroll-event", self._on_scroll)
+
+    def set_drop_callback(self, cb) -> None:
+        """cb(sources:list[str], dest:str|None, move:bool)"""
+        self._on_drop = cb
+
+    # --- drag & drop ------------------------------------------------------------
+
+    def _enable_drag_drop(self) -> None:
+        targets = [Gtk.TargetEntry.new("text/uri-list", Gtk.TargetFlags.OTHER_APP, 80)]
+        actions = Gdk.DragAction.COPY | Gdk.DragAction.MOVE
+        for view in (self._tree, self._icons):
+            view.enable_model_drag_source(Gdk.ModifierType.BUTTON1_MASK, targets, actions)
+            view.enable_model_drag_dest(targets, actions)
+            view.connect("drag-data-get", self._drag_data_get)
+            view.connect("drag-data-received", self._drag_data_received)
+
+    def _drag_data_get(self, _w, _ctx, sel, _info, _t, _ud):
+        sel.set_uris([Gio.File.new_for_path(p).get_uri()
+                      for p in self.selected_paths() if p])
+
+    def _drop_dest(self, x: float, y: float):
+        if self._mode in _ICON_WIDTHS:
+            pos = self._icons.get_item_at_pos(int(x), int(y))
+            if pos is not None:
+                m = self._icons.get_model()
+                it = m.get_iter(pos)
+                if m.get_value(it, COL_IS_DIR):
+                    return m.get_value(it, COL_PATH)
+            return None
+        hit = self._tree.get_path_at_pos(int(x), int(y))
+        if hit:
+            m = self._tree.get_model()
+            it = m.get_iter(hit[0])
+            if m.get_value(it, COL_IS_DIR):
+                return m.get_value(it, COL_PATH)
+        return None
+
+    def _drag_data_received(self, _w, ctx, x, y, sel, _info, time):
+        paths = []
+        for uri in (sel.get_uris() or []):
+            try:
+                p = Gio.File.new_for_uri(uri).get_path()
+                if p:
+                    paths.append(p)
+            except Exception:
+                pass
+        if not paths:
+            ctx.finish(False, False, time)
+            return
+        move = ctx.get_selected_action() == Gdk.DragAction.MOVE
+        dest = self._drop_dest(x, y)
+        if self._on_drop:
+            self._on_drop(paths, dest, move)
+        ctx.finish(True, False, time)
 
     # --- column setup -------------------------------------------------------
 
@@ -177,7 +246,9 @@ class FileView:
         check_cell.connect("toggled", self._on_check_toggled)
         check_col.set_sizing(Gtk.TreeViewColumnSizing.FIXED)
         check_col.set_fixed_width(30)
+        check_col.set_visible(False)  # hidden until item-checkboxes toggle is on
         tree.append_column(check_col)
+        self._check_col = check_col
 
         name_col = Gtk.TreeViewColumn(i18n._("Name"))
         cell_icon = Gtk.CellRendererPixbuf()
@@ -186,9 +257,10 @@ class FileView:
         name_col.pack_start(cell_icon, False)
         name_col.pack_start(cell_name, True)
         name_col.add_attribute(cell_icon, "icon-name", COL_ICON)
-        name_col.add_attribute(cell_name, "text", COL_NAME)
+        name_col.set_cell_data_func(cell_name, self._cell_format_name, None)
         name_col.set_sort_column_id(COL_NAME)
         name_col.set_expand(True)
+        name_col.set_resizable(True)
         tree.append_column(name_col)
 
         def _add_text_col(title, attr, sort_col, align=1.0, expand=False):
@@ -286,7 +358,7 @@ class FileView:
                 e.path, e.display_name, icon, e.is_dir,
                 e.size, (e.content_type or e.name),
                 e.mtime, files.mode_to_rwx(e.mode) if e.mode else "-",
-                e.owner, e.group, _icon_pixbuf(icon), False,
+                e.owner, e.group, _icon_pixbuf(icon, self._icon_size), False,
             ])
 
     def _cell_format_size(self, column, cell, model, it, _data):
@@ -296,6 +368,23 @@ class FileView:
     def _cell_format_mtime(self, column, cell, model, it, _data):
         mtime = model.get_value(it, COL_MTIME)
         cell.set_property("text", _fmt_time(mtime))
+
+    def _cell_format_name(self, column, cell, model, it, _d):
+        name = model.get_value(it, COL_NAME)
+        if not self._show_ext and self._mode in ("list", "details", "content"):
+            is_dir = model.get_value(it, COL_IS_DIR)
+            if not is_dir:
+                root, ext = os.path.splitext(name)
+                if ext and root:
+                    name = root
+        cell.set_property("text", name)
+
+    def set_checkboxes_visible(self, show: bool) -> None:
+        self._check_col.set_visible(bool(show))
+
+    def set_show_extensions(self, show: bool) -> None:
+        self._show_ext = bool(show)
+        self._tree.queue_draw()
 
     def _dirs_first(self, model, iter_a, iter_b, _ud):
         _, order = self._sort.get_sort_column_id()
@@ -326,12 +415,49 @@ class FileView:
 
     def _set_view(self, mode: str) -> None:
         self._mode = mode
-        if mode in _ICON_WIDTHS:
+        if mode in _ICON_SIZES:
+            self._icon_size = _ICON_SIZES[mode]
             self._setup_iconview()
             self._stack.set_visible_child_name("icons")
-            self._icons.set_item_width(_ICON_WIDTHS[mode])
+            self._icons.set_item_width(self._icon_size + 62)
+            self._rasterize_icons()
         else:
             self._stack.set_visible_child_name("tree")
+
+    def zoom(self, direction: int) -> None:
+        """Ctrl+scroll zoom: move one step in the layout size cycle."""
+        order = _ZOOM_CYCLE
+        idx = order.index(self._mode) if self._mode in order else \
+            (len(order) - 1) // 2
+        new_idx = min(len(order) - 1, max(0, idx + direction))
+        if new_idx != idx:
+            self._set_view(order[new_idx])
+
+    def _on_scroll(self, view, event) -> bool:
+        if not (event.state & Gdk.ModifierType.CONTROL_MASK):
+            return False
+        direction = event.direction
+        if direction == Gdk.ScrollDirection.UP:
+            self.zoom(1)
+        elif direction == Gdk.ScrollDirection.DOWN:
+            self.zoom(-1)
+        elif direction == Gdk.ScrollDirection.SMOOTH:
+            try:
+                dy = event.get_scroll_deltas()[1]
+            except Exception:
+                dy = 0
+            self.zoom(1 if dy < 0 else -1)
+        else:
+            return False
+        return True
+
+    def _rasterize_icons(self) -> None:
+        """Re-render the icon pixbufs for the current zoom size."""
+        for i in range(self._base.iter_n_children(None)):
+            it = self._base.iter_nth_child(None, i)
+            icon = self._base.get_value(it, COL_ICON)
+            pix = _icon_pixbuf(icon, self._icon_size)
+            self._base.set_value(it, COL_ICON_PIXBUF, pix)
 
     @property
     def view_mode(self) -> str:
@@ -353,11 +479,19 @@ class FileView:
         self._filter.refilter()
 
     def _filter_visible(self, model, it, _ud):
+        path = model.get_value(it, COL_PATH)
+        if path in self._hide_set:
+            return False
         if self._filter_text:
             name = model.get_value(it, COL_NAME).lower()
             if self._filter_text not in name:
                 return False
         return True
+
+    def set_hide_paths(self, paths) -> None:
+        """Hide (from the current view) the given paths; empty set clears."""
+        self._hide_set = set(paths or [])
+        self._filter.refilter()
 
     # --- selection ----------------------------------------------------------
 

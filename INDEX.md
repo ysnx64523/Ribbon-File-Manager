@@ -94,7 +94,7 @@ user action → handle_action(action)
 | `src/ribbonfm/config.py` | 43 | resources_dir |
 | `src/ribbonfm/core/__init__.py` | 1 | — |
 | `src/ribbonfm/core/files.py` | 252 | FileEntry, mode_to_rwx, _str_of, _uint_of, _entry_from_info, list_dir, entry_for_path, rename, make_directory, make_file, copy, move, delete_permanent, trash, set_permissions, set_owner, is_writable, is_readable, free_space, unique_path, resolve_symlink |
-| `src/ribbonfm/core/mounts.py` | 129 | MountInfo, list_mounts, mount_volume, _removable, is_mount_point |
+| `src/ribbonfm/core/mounts.py` | 178 | MountInfo, list_mounts, _os_mount_points, mount_volume, _removable, is_mount_point |
 | `src/ribbonfm/core/pathutils.py` | 115 | user_home, _special_dir, user_desktop, user_documents, user_downloads, user_music, user_pictures, user_videos, special_navigation, path_to_file, file_to_path, is_hidden_path, display_name, home_or_root, normalize, kind_label |
 | `src/ribbonfm/core/perm.py` | 338 | UnsupportedError, PermHint, is_root, current_user, is_admin, _win_admin, _mode_str, inspect, _win_writable, can_no_privilege, _pkexec_ok, escalate, _escalate_tokens, chmod, chown, write_protected |
 | `src/ribbonfm/core/sorts.py` | 21 | make_key |
@@ -103,18 +103,18 @@ user action → handle_action(action)
 | `src/ribbonfm/ui/__init__.py` | 7 | — |
 | `src/ribbonfm/ui/addressbar.py` | 95 | AddressBar |
 | `src/ribbonfm/ui/dialogs.py` | 90 | show_error, show_info, confirm, ask_text |
-| `src/ribbonfm/ui/fileview.py` | 481 | _icon_for, _size_str, _icon_pixbuf, format_size, FileView, _path_of, _iters, _fmt_time |
-| `src/ribbonfm/ui/mainwindow.py` | 389 | MainWindow, _size_human, _ts |
+| `src/ribbonfm/ui/fileview.py` | 615 | _icon_for, _size_str, _icon_pixbuf, format_size, FileView, _path_of, _iters, _fmt_time |
+| `src/ribbonfm/ui/mainwindow.py` | 460 | MainWindow, _size_human, _ts |
 | `src/ribbonfm/ui/menus.py` | 78 | build_item_menu, build_background_menu, popup |
-| `src/ribbonfm/ui/navigation.py` | 113 | NavigationMixin |
-| `src/ribbonfm/ui/ops.py` | 215 | FileOpsMixin |
-| `src/ribbonfm/ui/propsdialog.py` | 158 | PropertiesDialog, _size_human |
+| `src/ribbonfm/ui/navigation.py` | 116 | NavigationMixin |
+| `src/ribbonfm/ui/ops.py` | 362 | FileOpsMixin |
+| `src/ribbonfm/ui/propsdialog.py` | 291 | PropertiesDialog, _size_human |
 | `src/ribbonfm/ui/ribbon.py` | 313 | _large_button, _small_button, _on_click, _group_widget, Ribbon |
 | `src/ribbonfm/ui/ribbon_spec.py` | 143 | _btn, _group |
-| `src/ribbonfm/ui/sidepanel.py` | 225 | Sidebar, _human_label |
+| `src/ribbonfm/ui/sidepanel.py` | 247 | Sidebar, _human_label |
 | `src/ribbonfm/ui/statusbar.py` | 73 | StatusBar, _n, format_size |
 | `tools/gen_index.py` | 155 | _symbols, _class_methods, _scan, _entry_points, _render, build, update, main |
-| `tools/gen_po.py` | 291 | _concat_msgid, generate, _parse_quoted, _escape, compile_mo, main |
+| `tools/gen_po.py` | 323 | _concat_msgid, generate, _parse_quoted, _escape, compile_mo, main |
 | `tests/test_core.py` | 110 | ModeTest, ListingTest, SortTest, PermTest, PathTest |
 
 ### Entry points
@@ -127,11 +127,11 @@ user action → handle_action(action)
 - `src/ribbonfm/core/mounts.py`: MountInfo.is_valid
 - `src/ribbonfm/core/perm.py`: PermHint.warning
 - `src/ribbonfm/ui/addressbar.py`: AddressBar.__init__, AddressBar._on_toggle, AddressBar._set_edit_mode, AddressBar._on_entry_activate, AddressBar.set_path, AddressBar._rebuild_crumbs, AddressBar._add_separator, AddressBar._add_crumb, AddressBar._on_crumb_click, AddressBar.show_entry
-- `src/ribbonfm/ui/fileview.py`: FileView.__init__, FileView._pixbuf_col, FileView._setup_tree, FileView._setup_iconview, FileView._base_set, FileView._on_check_toggled, FileView._on_selection_changed, FileView.set_entries, FileView._cell_format_size, FileView._cell_format_mtime, FileView._dirs_first, FileView._set_sort, FileView.set_view, FileView._set_view, FileView.view_mode, FileView.set_show_hidden, FileView.set_sort_by, FileView.set_filter, FileView._filter_visible, FileView.selected_paths, FileView.select_all, FileView.unselect_all, FileView.invert_selection, FileView._row_activated, FileView._button_press
-- `src/ribbonfm/ui/mainwindow.py`: MainWindow.__init__, MainWindow._adopt_widgets, MainWindow._build_children, MainWindow._load_directory, MainWindow._on_dir_loaded, MainWindow._on_dir_error, MainWindow._update_status, MainWindow.on_window_destroy, MainWindow._on_search_changed, MainWindow._on_view_selection_changed, MainWindow._toggle_pane, MainWindow._clear_info_pane, MainWindow._update_info_pane, MainWindow._fill_details, MainWindow._on_file_activated, MainWindow._on_ribbon_collapse, MainWindow.handle_action, MainWindow._action_table, MainWindow._toggle_nav_pane, MainWindow._open_terminal_admin, MainWindow._help, MainWindow._pin_to_quick_access, MainWindow._set_sort_mode, MainWindow._show_error, MainWindow._show_info, MainWindow._show_context_menu
+- `src/ribbonfm/ui/fileview.py`: FileView.__init__, FileView.set_drop_callback, FileView._enable_drag_drop, FileView._drag_data_get, FileView._drop_dest, FileView._drag_data_received, FileView._pixbuf_col, FileView._setup_tree, FileView._setup_iconview, FileView._base_set, FileView._on_check_toggled, FileView._on_selection_changed, FileView.set_entries, FileView._cell_format_size, FileView._cell_format_mtime, FileView._cell_format_name, FileView.set_checkboxes_visible, FileView.set_show_extensions, FileView._dirs_first, FileView._set_sort, FileView.set_view, FileView._set_view, FileView.zoom, FileView._on_scroll, FileView._rasterize_icons, FileView.view_mode, FileView.set_show_hidden, FileView.set_sort_by, FileView.set_filter, FileView._filter_visible, FileView.set_hide_paths, FileView.selected_paths, FileView.select_all, FileView.unselect_all, FileView.invert_selection, FileView._row_activated, FileView._button_press
+- `src/ribbonfm/ui/mainwindow.py`: MainWindow.__init__, MainWindow._adopt_widgets, MainWindow._build_children, MainWindow._load_directory, MainWindow._on_dir_loaded, MainWindow._on_dir_error, MainWindow._update_status, MainWindow.on_window_destroy, MainWindow._on_search_changed, MainWindow._on_view_selection_changed, MainWindow._on_drop, MainWindow._toggle_pane, MainWindow._clear_info_pane, MainWindow._update_info_pane, MainWindow._fill_details, MainWindow._on_file_activated, MainWindow._on_ribbon_collapse, MainWindow.handle_action, MainWindow._action_table, MainWindow._toggle_nav_pane, MainWindow._toggle_checkboxes, MainWindow._toggle_extensions, MainWindow._apply_pane_visibility, MainWindow._hide_selected, MainWindow._open_terminal_admin, MainWindow._help, MainWindow._pin_to_quick_access, MainWindow._set_sort_mode, MainWindow._show_error, MainWindow._show_info, MainWindow._show_context_menu
 - `src/ribbonfm/ui/navigation.py`: NavigationMixin._init_navigation, NavigationMixin.navigate, NavigationMixin._canonicalize, NavigationMixin._on_navigated, NavigationMixin.go_back, NavigationMixin.go_forward, NavigationMixin.go_up, NavigationMixin.refresh, NavigationMixin._update_nav_state, NavigationMixin.toggle_show_hidden, NavigationMixin.on_nav_back, NavigationMixin.on_nav_forward, NavigationMixin.on_nav_up, NavigationMixin.on_nav_refresh, NavigationMixin.on_address_activate, NavigationMixin.on_toggle_crumb_edit, NavigationMixin._app_title_text, NavigationMixin.start_location
-- `src/ribbonfm/ui/ops.py`: FileOpsMixin._init_clipboard, FileOpsMixin._set_clip, FileOpsMixin.paste, FileOpsMixin._destination_for, FileOpsMixin.new_folder, FileOpsMixin.new_file, FileOpsMixin.rename, FileOpsMixin.delete, FileOpsMixin.delete_permanent, FileOpsMixin._run_for_each, FileOpsMixin.properties, FileOpsMixin.open_selection, FileOpsMixin.open_path, FileOpsMixin.open_with_default, FileOpsMixin.open_selection_with, FileOpsMixin.open_with_dialog, FileOpsMixin.open_terminal, FileOpsMixin._summarize
-- `src/ribbonfm/ui/propsdialog.py`: PropertiesDialog.__init__, PropertiesDialog.run, PropertiesDialog._add_grid_row, PropertiesDialog._build_perm_editor, PropertiesDialog._type_label, PropertiesDialog._size_label, PropertiesDialog._time
+- `src/ribbonfm/ui/ops.py`: FileOpsMixin._init_clipboard, FileOpsMixin._set_clip, FileOpsMixin.paste, FileOpsMixin._destination_for, FileOpsMixin.new_folder, FileOpsMixin.new_file, FileOpsMixin.rename, FileOpsMixin.delete, FileOpsMixin.delete_permanent, FileOpsMixin._run_for_each, FileOpsMixin.properties, FileOpsMixin.open_selection, FileOpsMixin.open_path, FileOpsMixin.open_with_default, FileOpsMixin.open_selection_with, FileOpsMixin.open_with_dialog, FileOpsMixin._pick_program, FileOpsMixin.open_terminal, FileOpsMixin._summarize
+- `src/ribbonfm/ui/propsdialog.py`: PropertiesDialog.__init__, PropertiesDialog.run, PropertiesDialog._build_general_tab, PropertiesDialog._build_security_tab, PropertiesDialog._add_perm_matrix, PropertiesDialog._build_perm_editor, PropertiesDialog._build_details_tab, PropertiesDialog._add_grid_row, PropertiesDialog._add_plain_row, PropertiesDialog._type_label, PropertiesDialog._size_label, PropertiesDialog._time
 - `src/ribbonfm/ui/ribbon.py`: Ribbon.__init__, Ribbon.build, Ribbon._build_file_backstage, Ribbon._add_menu_item, Ribbon._build_quick_access, Ribbon._build_collapse_toggle, Ribbon._on_collapse_toggled, Ribbon.collapsed, Ribbon.set_checked, Ribbon._apply_check
 - `src/ribbonfm/ui/sidepanel.py`: Sidebar.__init__, Sidebar._load_bookmarks, Sidebar._save_bookmarks, Sidebar.refresh, Sidebar._build_devices, Sidebar._places, Sidebar._build_section, Sidebar._on_activated, Sidebar._activate_token, Sidebar._on_mount_done, Sidebar._on_button_press, Sidebar._show_context_menu, Sidebar.add_bookmark, Sidebar.remove_bookmark
 - `src/ribbonfm/ui/statusbar.py`: StatusBar.__init__, StatusBar._clear, StatusBar.set

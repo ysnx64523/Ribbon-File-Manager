@@ -186,26 +186,173 @@ class FileOpsMixin:
             self.open_with_dialog(paths[0])
 
     def open_with_dialog(self, path: str) -> None:
-        file_ = Gio.File.new_for_path(path)
-        ctype = file_.query_info("standard::content-type").get_content_type()
-        apps = Gio.AppInfo.get_all_for_type(ctype)
+        """Open-With chooser: list all system apps + pick a custom program."""
         from gi.repository import Gtk
-        menu = Gtk.Menu()
-        for app in apps:
-            item = Gtk.MenuItem(label=app.get_name())
-            item.connect("activate", lambda _, a=app: a.launch([file_], None))
-            menu.append(item)
-        if not apps:
-            self._show_info(i18n._("No application found"),
-                            i18n._("There is no registered application for this type."))
-            return
-        menu.show_all()
-        menu.popup_at_pointer(None)
+        import subprocess
+        file_ = Gio.File.new_for_path(path)
+        apps = list(Gio.AppInfo.get_all()) + \
+            list(Gio.AppInfo.get_all_for_type("text/plain") or [])
+        seen = set()
+        unique = []
+        for a in apps:
+            key = a.get_id() or a.get_executable()
+            if key in seen:
+                continue
+            seen.add(key)
+            unique.append(a)
+        apps = sorted(unique, key=lambda a: a.get_name().lower())
+
+        dialog = Gtk.Dialog(transient_for=self, modal=True, title=i18n._("Open With"),
+                            buttons=(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
+                                     i18n._("Open"), Gtk.ResponseType.ACCEPT))
+        dialog.set_default_size(520, 460)
+        area = dialog.get_content_area()
+
+        header = Gtk.Label(label=i18n._("Choose an application to open {name}")
+                           .format(name=os.path.basename(path)))
+        header.set_xalign(0)
+        header.get_style_context().add_class("prop-key")
+        area.pack_start(header, False, False, 6)
+
+        search = Gtk.SearchEntry()
+        search.set_placeholder_text(i18n._("Search programs"))
+        area.pack_start(search, False, False, 6)
+
+        scroller = Gtk.ScrolledWindow()
+        scroller.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
+        scroller.set_size_request(-1, 220)
+        listbox = Gtk.ListBox()
+        listbox.set_selection_mode(Gtk.SelectionMode.SINGLE)
+        scroller.add(listbox)
+        area.pack_start(scroller, True, True, 6)
+
+        pending = {"prog": None}
+
+        def launch(app) -> None:
+            try:
+                if callable(app):
+                    app()
+                else:
+                    app.launch([file_], None)
+            except Exception as exc:  # noqa: BLE001
+                self._show_error(i18n._("Could not open this file"), str(exc))
+
+        def make_row(item):
+            row = Gtk.ListBoxRow()
+            box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=10)
+            if item == "__browse__":
+                icon = Gtk.Image.new_from_icon_name("system-file-manager", Gtk.IconSize.DND)
+                lbl = Gtk.Label(label=i18n._("Browse a custom program..."))
+                target = lambda: self._pick_program(path, dialog)
+                row._launch = target
+            else:
+                try:
+                    icon = Gtk.Image.new_from_gicon(item.get_icon(), Gtk.IconSize.DND)
+                except Exception:
+                    icon = Gtk.Image.new_from_icon_name("application-x-executable",
+                                                        Gtk.IconSize.DND)
+                lbl = Gtk.Label(label=item.get_name())
+                row._launch = (lambda a=item: a.launch([file_], None))
+            lbl.set_xalign(0)
+            box.pack_start(icon, False, False, 0)
+            box.pack_start(lbl, True, True, 0)
+            row.add(box)
+            return row
+
+        def populate(query: str) -> None:
+            for child in listbox.get_children():
+                listbox.remove(child)
+            q = query.lower()
+            matched = 0
+            for app in apps:
+                if q and q not in app.get_name().lower():
+                    continue
+                listbox.add(make_row(app))
+                matched += 1
+            if not matched and not q:
+                pass
+            if q and matched == 0:
+                none = Gtk.ListBoxRow()
+                lbl = Gtk.Label(label=i18n._("No matching application"))
+                none.add(lbl)
+                listbox.add(none)
+            listbox.add(make_row("__browse__"))
+            listbox.show_all()
+
+        search.connect("search-changed", lambda e: populate(e.get_text()))
+        listbox.connect("row-activated", lambda _lb, row: (
+            row._launch(), dialog.response(Gtk.ResponseType.ACCEPT))[0] is None)
+
+        def on_response(d, resp):
+            if resp == Gtk.ResponseType.ACCEPT:
+                row = listbox.get_selected_row()
+                if row is not None:
+                    row._launch()
+                elif pending["prog"]:
+                    pending["prog"]()
+            d.destroy()
+
+        dialog.connect("response", on_response)
+        populate("")
+        dialog.show_all()
+        dialog.run()
+
+    def _pick_program(self, path, dialog) -> None:
+        """Let the user browse for a custom program to open the file."""
+        from gi.repository import Gtk
+        chooser = Gtk.FileChooserDialog(
+            title=i18n._("Choose a program"), transient_for=self,
+            action=Gtk.FileChooserAction.OPEN,
+            buttons=(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
+                     Gtk.STOCK_OPEN, Gtk.ResponseType.OK))
+        prog_filter = Gtk.FileFilter()
+        prog_filter.set_name(i18n._("Executables"))
+        prog_filter.add_pattern("*.desktop")
+        prog_filter.add_pattern("*")
+        chooser.add_filter(prog_filter)
+        if chooser.run() == Gtk.ResponseType.OK:
+            prog = chooser.get_filename()
+            chooser.destroy()
+            if prog:
+                try:
+                    import subprocess
+                    subprocess.Popen([prog, path])
+                except Exception as exc:  # noqa: BLE001
+                    self._show_error(i18n._("Could not open this file"), str(exc))
+                dialog.destroy()
+        else:
+            chooser.destroy()
 
     def open_terminal(self) -> None:
+        """Launch the system default terminal in the current folder."""
+        import shlex
+        import shutil
+        import subprocess
+
+        terminal = None
+        for name in ("x-terminal-emulator", "gnome-terminal", "konsole",
+                     "xfce4-terminal", "mate-terminal", "lxterminal",
+                     "alacritty", "kitty", "xterm"):
+            if shutil.which(name):
+                terminal = name
+                break
+        if not terminal:
+            self._show_error(i18n._("Could not open terminal"),
+                             i18n._("No supported terminal was found on the system."))
+            return
+
+        cwd = self._current
+        args: list[str] = [terminal]
+        if terminal == "konsole":
+            args += ["--workdir", cwd]
+        elif terminal == "xterm":
+            args += ["-e", f"cd {shlex.quote(cwd)} && exec {os.environ.get('SHELL', 'bash')}"]
+        elif terminal == "x-terminal-emulator":
+            pass  # inherit cwd via the spawned process
+        else:  # gnome-terminal / xfce4-terminal / mate-terminal / lxterminal / ...
+            args += ["--working-directory", cwd]
         try:
-            Gio.AppInfo.launch_default_for_uri(
-                Gio.File.new_for_path(self._current).get_uri(), None)
+            subprocess.Popen(args, cwd=cwd)
         except Exception as exc:  # noqa: BLE001
             self._show_error(i18n._("Could not open terminal"), str(exc))
 

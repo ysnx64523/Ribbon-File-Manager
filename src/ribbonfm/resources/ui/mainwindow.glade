@@ -3,13 +3,9 @@
      Loaded with Gtk.Builder. Widgets referenced by id: id (name). -->
 <interface>
   <requires lib="gtk+" version="3.24"/>
-  <object class="GtkApplicationWindow" id="main_window">
+  <object class="GtkBox" id="window_root">
     <property name="visible">True</property>
-    <property name="can_focus">True</property>
-    <property name="title">Ribbon File Manager</property>
-    <property name="default-width">1080</property>
-    <property name="default-height">720</property>
-    <signal name="destroy" handler="on_window_destroy"/>
+    <property name="orientation">vertical</property>
     <child>
       <object class="GtkBox" id="root_box">
         <property name="visible">True</property>
@@ -262,7 +258,6 @@
                       <object class="GtkBox" id="info_pane">
                         <property name="visible">True</property>
                         <property name="orientation">vertical</property>
-                        <property name="width-request">240</property>
                         <child>
                           <object class="GtkScrolledWindow" id="preview_pane">
                             <property name="visible">True</property>

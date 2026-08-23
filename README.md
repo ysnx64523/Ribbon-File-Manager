@@ -2,7 +2,7 @@
 
 A cross-platform file manager with a **Windows-Explorer-like Ribbon toolbar**,
 written in Python with **GTK3 (PyGObject)**. It runs natively on Linux and is
-designed to be portable to Windows and macOS.
+designed to be portable to Windows .
 
 ![Languages: en, zh_CN](https://img.shields.io/badge/i18n-en%20%7C%20zh__CN-blue) · License: [Apache-2.0](LICENSE) · UI toolkit: GTK3
 

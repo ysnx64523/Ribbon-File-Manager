@@ -58,11 +58,11 @@ TABS = [
                 _btn("new_item", "new_item", "document-new", "new_file"),
             ]),
             _group("group_open", [
-                _btn("properties", "properties", "document-properties", "properties", large=False),
+                _btn("properties", "properties", "document-properties", "properties"),
                 _btn("open", "open", "document-open", "open", large=False),
                 _btn("edit", "edit", "accessories-text-editor", "edit", large=False),
                 _btn("history", "history", "document-open-recent", "history", large=False),
-            ]),
+            ], columns=1),
             _group("group_select", [
                 _btn("select_all", "select_all", "edit-select-all", "select_all", large=False),
                 _btn("select_none", "select_none", "edit-clear-all-symbolic", "select_none", large=False),

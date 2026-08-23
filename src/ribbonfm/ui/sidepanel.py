@@ -11,7 +11,7 @@ import json
 from pathlib import Path
 from typing import Callable, Optional
 
-from gi.repository import Gtk, Gdk, Pango
+from gi.repository import Gtk, Gdk, Gio, Pango
 
 from .. import config
 from .. import i18n
@@ -92,22 +92,44 @@ class Sidebar:
                             [(i18n._("Network locations"), "", "network-wired")])
 
     def _build_devices(self) -> None:
-        """List *all* disk volumes (mounted and unmounted) under Devices."""
+        """List disks as an expandable tree: drive -> volumes."""
+
+        def icon_of(gicon) -> str:
+            try:
+                names = list(gicon.get_names()) if hasattr(gicon, "get_names") else []
+                return names[0] if names else "drive-harddisk"
+            except Exception:
+                return "drive-harddisk"
+
         self._mount_map.clear()
         parent = self._model.append(None, ["drive-harddisk", i18n._("Devices"),
                                            "", _SECTION])
+        # Group volumes under their physical drive (Gio.Drive); volumes without
+        # a drive go straight under Devices.
+        drive_nodes: dict[str, object] = {}
         for m in mounts.list_mounts():
+            drive = m.volume.get_drive() if m.volume is not None else None
+            if drive is not None:
+                dname = drive.get_name() or i18n._("Drive")
+                node = drive_nodes.get(dname)
+                if node is None:
+                    node = self._model.append(
+                        parent, [icon_of(drive.get_icon()), dname, "", _SECTION])
+                    drive_nodes[dname] = node
+            else:
+                node = parent
             token = m.uri or (m.path or "")
             if not token:
                 continue
             self._mount_map[token] = m
-            if m.mounted:
-                label = m.name
-            else:
-                label = f"{m.name} ({i18n._('Not mounted')})"
-            self._model.append(parent,
-                               [m.icon_name or "drive-harddisk", label, token, _ITEM])
+            label = m.name
+            if not m.mounted:
+                label = f"{label} ({i18n._('Not mounted')})"
+            self._model.append(node, [m.icon_name or "drive-harddisk", label,
+                                      token, _ITEM])
         self._view.expand_row(self._model.get_path(parent), False)
+        for node in drive_nodes.values():
+            self._view.expand_row(self._model.get_path(node), False)
 
     def _places(self) -> list[tuple[str, str, str]]:
         places: list[tuple[str, str, str]] = []

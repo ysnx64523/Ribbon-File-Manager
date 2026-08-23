@@ -48,6 +48,9 @@ class NavigationMixin:
         self.set_title(f"{self._app_title_text()} - {path}")
         self._address.set_path(path)
         self._update_nav_state()
+        hidden = getattr(self, "_file_view", None)
+        if hidden is not None and hasattr(hidden, "set_hide_paths"):
+            hidden.set_hide_paths([])  # every folder shows all its files
         self._load_directory(path)
 
     def go_back(self) -> None:

@@ -29,7 +29,7 @@ dependencies = ["PyGObject>=3.40"]
 ribbonfm = "ribbonfm.app:main"
 
 [project.urls]
-Homepage = "https://github.com/haiiliin/pyqtribbon"
+Homepage = "https://github.com/ysnx64523/Ribbon-File-Manager"
 # The Ribbon concept mirrors the upstream PyQtRibbon project but this is an
 # independent GTK3 implementation.
 

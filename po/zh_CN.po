@@ -149,7 +149,7 @@ msgid "Location"
 msgstr "位置"
 
 msgid "Octal mode"
-msgstr ""
+msgstr "八进制模式"
 
 msgid "This location is writable by all users or is managed with elevated privileges."
 msgstr "此位置对所有用户可写，或由提权管理。"
@@ -487,6 +487,12 @@ msgstr "按类型分组"
 msgid "open_terminal"
 msgstr "打开终端"
 
+msgid "Open Terminal"
+msgstr "打开终端"
+
+msgid "No supported terminal was found on the system."
+msgstr "系统上未找到受支持的终端程序。"
+
 msgid "open_terminal_admin"
 msgstr "以管理员身份打开终端"
 
@@ -520,6 +526,30 @@ msgstr "共享"
 msgid "compress"
 msgstr "压缩"
 
+msgid "Open With"
+msgstr "打开方式"
+
+msgid "Choose an application to open {name}"
+msgstr "选择用于打开 {name} 的应用程序"
+
+msgid "Search programs"
+msgstr "搜索程序"
+
+msgid "Browse a custom program..."
+msgstr "浏览自定义程序..."
+
+msgid "Choose a program"
+msgstr "选择程序"
+
+msgid "Executables"
+msgstr "可执行文件"
+
+msgid "No matching application"
+msgstr "没有匹配的应用程序"
+
+msgid "Cancel"
+msgstr "取消"
+
 msgid "Not mounted"
 msgstr "未挂载"
 
@@ -546,4 +576,55 @@ msgstr "音乐"
 
 msgid "Videos"
 msgstr "视频"
+
+msgid "General"
+msgstr "常规"
+
+msgid "Security"
+msgstr "安全"
+
+msgid "Details"
+msgstr "详细信息"
+
+msgid "Object name"
+msgstr "对象名称"
+
+msgid "Read"
+msgstr "读取"
+
+msgid "Write"
+msgstr "写入"
+
+msgid "Execute"
+msgstr "执行"
+
+msgid "Others"
+msgstr "其他"
+
+msgid "File type"
+msgstr "文件类型"
+
+msgid "Size on disk"
+msgstr "占用空间"
+
+msgid "Created"
+msgstr "创建时间"
+
+msgid "Accessed"
+msgstr "访问时间"
+
+msgid "Read-only"
+msgstr "只读"
+
+msgid "Hidden"
+msgstr "隐藏"
+
+msgid "Edit"
+msgstr "编辑"
+
+msgid "Path"
+msgstr "路径"
+
+msgid "Permissions are not available."
+msgstr "无法获取权限信息。"
 

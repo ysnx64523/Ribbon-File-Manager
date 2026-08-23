@@ -31,8 +31,8 @@ _SORT_MODES = ("name", "size", "type", "mtime")
 
 # View-tab toggles/placeholders that only flip their checked state (no dialog).
 _QUIET_TOGGLES = {
-    "checkboxes", "file_extensions", "add_columns", "fit_columns", "sort_by",
-    "hide_selected", "selected_items", "hidden_extra",
+    "add_columns", "fit_columns", "sort_by",
+    "selected_items", "hidden_extra",
 }
 
 
@@ -49,7 +49,11 @@ class MainWindow(Gtk.ApplicationWindow, NavigationMixin, FileOpsMixin):
 
         self._adopt_widgets()
         self._build_children()
+        self.set_title(config.APP_NAME)
+        self.set_default_size(1080, 720)
+        self.add(self._builder.get_object("window_root"))
         self.show_all()
+        self._apply_pane_visibility()
 
         self.navigate(start_path or self.start_location())
 
@@ -79,8 +83,8 @@ class MainWindow(Gtk.ApplicationWindow, NavigationMixin, FileOpsMixin):
         self._preview_label = b.get_object("preview_label")
         self._details_pane = b.get_object("details_pane")
         self._details_grid = b.get_object("details_grid")
-        self._preview_on = True
-        self._details_on = True
+        self._preview_on = False
+        self._details_on = False
 
     def _build_children(self) -> None:
         self._file_view = FileView(
@@ -104,6 +108,10 @@ class MainWindow(Gtk.ApplicationWindow, NavigationMixin, FileOpsMixin):
             "changed", self._on_view_selection_changed)
         self._file_view._icons.connect(
             "selection-changed", self._on_view_selection_changed)
+        self._file_view.set_drop_callback(self._on_drop)
+        # Default view toggles: item checkboxes / extensions / hidden items.
+        self._file_view.set_checkboxes_visible(False)
+        self._file_view.set_show_extensions(False)
 
     # --- directory loading ----------------------------------------------------
 
@@ -161,6 +169,35 @@ class MainWindow(Gtk.ApplicationWindow, NavigationMixin, FileOpsMixin):
         else:
             self._clear_info_pane()
 
+    def _on_drop(self, sources, dest, move) -> None:
+        """Copy/move dropped items into ``dest`` (or the current folder)."""
+        target = dest or self._current
+        if not sources:
+            return
+
+        def work():
+            results = []
+            for s in sources:
+                dst = files.unique_path(os.path.join(target, os.path.basename(s)))
+                try:
+                    if move:
+                        files.move(s, dst)
+                    else:
+                        files.copy(s, dst)
+                    results.append((s, None))
+                except Exception as exc:  # noqa: BLE001
+                    results.append((s, exc))
+            return results
+
+        def done(res):
+            self.refresh()
+            errors = [e for _, e in res if e]
+            if errors:
+                self._show_error(i18n._("Some items could not be dropped"),
+                                 "\n".join(str(e) for e in errors[:5]))
+
+        call_async(work, on_done=done)
+
     def _toggle_pane(self, kind: str) -> None:
         if kind == "preview":
             self._preview_on = not self._preview_on
@@ -169,6 +206,9 @@ class MainWindow(Gtk.ApplicationWindow, NavigationMixin, FileOpsMixin):
         self._preview_pane.set_visible(self._preview_on)
         self._details_pane.set_visible(self._details_on)
         self._info_pane.set_visible(self._preview_on or self._details_on)
+        # Keep the ribbon checkbox in sync with the actual pane visibility.
+        self._ribbon.set_checked("preview_pane", self._preview_on)
+        self._ribbon.set_checked("details_pane", self._details_on)
         self._on_view_selection_changed()
 
     def _clear_info_pane(self) -> None:
@@ -226,7 +266,6 @@ class MainWindow(Gtk.ApplicationWindow, NavigationMixin, FileOpsMixin):
             v.set_selectable(True)
             v.set_ellipsize(3)
             v.set_hexpand(True)
-            v.set_wrap(False)
             grid.attach(k, 0, row, 1, 1)
             grid.attach(v, 1, row, 1, 1)
             row += 1
@@ -270,6 +309,13 @@ class MainWindow(Gtk.ApplicationWindow, NavigationMixin, FileOpsMixin):
             self._toggle_pane("preview" if action == "preview_pane" else "details")
             return
 
+        if action in ("checkboxes", "file_extensions"):
+            if action == "checkboxes":
+                self._toggle_checkboxes()
+            else:
+                self._toggle_extensions()
+            return
+
         if action in _QUIET_TOGGLES:
             # Toggle-only / placeholder View buttons: their checked state already
             # flipped; do not pop a dialog.
@@ -301,6 +347,7 @@ class MainWindow(Gtk.ApplicationWindow, NavigationMixin, FileOpsMixin):
             "select_all": self._file_view.select_all,
             "select_none": self._file_view.unselect_all,
             "invert_select": self._file_view.invert_selection,
+            "hide_selected": self._hide_selected,
             "open": self.open_selection,
             "edit": self.open_selection_with,
             "open_with": self.open_selection_with,
@@ -315,6 +362,30 @@ class MainWindow(Gtk.ApplicationWindow, NavigationMixin, FileOpsMixin):
     def _toggle_nav_pane(self) -> None:
         self._sidebar_container.set_visible(not self._sidebar_container.get_visible())
 
+    def _toggle_checkboxes(self) -> None:
+        show = not self._file_view._check_col.get_visible()
+        self._file_view.set_checkboxes_visible(show)
+        self._ribbon.set_checked("checkboxes", show)
+
+    def _toggle_extensions(self) -> None:
+        show = not self._file_view._show_ext
+        self._file_view.set_show_extensions(show)
+        self._ribbon.set_checked("file_extensions", show)
+
+    def _apply_pane_visibility(self) -> None:
+        """Set the right info pane visibility from the current flags."""
+        self._preview_pane.set_visible(self._preview_on)
+        self._details_pane.set_visible(self._details_on)
+        self._info_pane.set_visible(self._preview_on or self._details_on)
+
+    def _hide_selected(self) -> None:
+        """Hide the currently selected items from the view."""
+        paths = self._file_view.selected_paths()
+        if not paths:
+            return
+        cur = getattr(self._file_view, "_hide_set", set())
+        self._file_view.set_hide_paths(cur | set(paths))
+
     def _open_terminal_admin(self) -> None:
         show_info(self, i18n._("Administrator terminal"),
                   i18n._("This would open a terminal with elevated privileges."))
@@ -328,7 +399,7 @@ class MainWindow(Gtk.ApplicationWindow, NavigationMixin, FileOpsMixin):
                 version="0.1.0",
                 comments=i18n._("A cross-platform Ribbon-style file manager."),
                 license_type=Gtk.License.APACHE_2_0,
-                website="https://github.com/haiiliin/pyqtribbon",
+                website="https://github.com/ysnx64523/Ribbon-File-Manager",
             )
             dialog.run()
             dialog.destroy()
