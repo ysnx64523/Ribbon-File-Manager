@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "ribbonfm"
-version = "0.1.0"
+version = "1.6"
 description = "A cross-platform Ribbon-style file manager built with PyGObject (GTK3)"
 readme = "README.md"
 license = { text = "Apache-2.0" }
