@@ -6,7 +6,16 @@ resources (Glade UI, CSS, compiled .mo catalogs), producing a onedir ``RibbonFM`
 folder that runs without any system GTK/PyGObject dependency.
 """
 
+import os
+import sys
+from pathlib import Path
+
 from PyInstaller.utils.hooks import collect_all, collect_data_files
+
+# Repo root relative to this spec (SPECPATH == pack/linux).
+ROOT = Path(os.path.abspath(os.path.join(SPECPATH, "..", "..")))
+SRC = str(ROOT / "src")
+sys.path.insert(0, SRC)
 
 datas, binaries, hiddenimports = [], [], []
 
@@ -29,8 +38,8 @@ hiddenimports += [
 ]
 
 a = Analysis(
-    ["pack/linux/launcher.py"],
-    pathex=[],
+    [str(ROOT / "pack" / "linux" / "launcher.py")],
+    pathex=[SRC],
     binaries=binaries,
     datas=datas,
     hiddenimports=hiddenimports,
