@@ -1,0 +1,381 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-08-23 20:45+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: src/ribbonfm/core/perm.py:282
+msgid "pkexec is not available to elevate privileges."
+msgstr ""
+
+#: src/ribbonfm/core/perm.py:287
+msgid "The privileged operation timed out."
+msgstr ""
+
+#: src/ribbonfm/core/perm.py:289
+#, python-brace-format
+msgid "Failed to start the privileged helper: {err}"
+msgstr ""
+
+#: src/ribbonfm/core/perm.py:293
+msgid "You cancelled the authentication request."
+msgstr ""
+
+#: src/ribbonfm/core/perm.py:294
+#, python-brace-format
+msgid "The privileged operation was rejected: {msg}"
+msgstr ""
+
+#: src/ribbonfm/core/perm.py:298
+msgid "runas escalation is not wired up in this build."
+msgstr ""
+
+#: src/ribbonfm/core/perm.py:300
+msgid "osascript escalation is not wired up in this build."
+msgstr ""
+
+#: src/ribbonfm/core/perm.py:301
+msgid "Privilege escalation is not supported on this platform."
+msgstr ""
+
+#: src/ribbonfm/core/perm.py:318
+#, python-brace-format
+msgid "Could not change permissions: {err}"
+msgstr ""
+
+#: src/ribbonfm/ui/ribbon.py:284
+msgid "ribbon_collapse"
+msgstr ""
+
+#: src/ribbonfm/ui/statusbar.py:35
+#, python-brace-format
+msgid "Location: {loc}"
+msgstr ""
+
+#: src/ribbonfm/ui/statusbar.py:38
+#, python-brace-format
+msgid "{n} items"
+msgstr ""
+
+#: src/ribbonfm/ui/statusbar.py:41
+#, python-brace-format
+msgid "{n} selected"
+msgstr ""
+
+#: src/ribbonfm/ui/statusbar.py:44
+#, python-brace-format
+msgid "Free space: {size}"
+msgstr ""
+
+#: src/ribbonfm/ui/statusbar.py:47
+#, python-brace-format
+msgid "User: {user}"
+msgstr ""
+
+#: src/ribbonfm/ui/statusbar.py:49
+msgid "administrator"
+msgstr ""
+
+#: src/ribbonfm/ui/statusbar.py:53
+msgid "Read only"
+msgstr ""
+
+#: src/ribbonfm/ui/sidepanel.py:85
+msgid "Places"
+msgstr ""
+
+#: src/ribbonfm/ui/sidepanel.py:86
+msgid "Bookmarks"
+msgstr ""
+
+#: src/ribbonfm/ui/sidepanel.py:89
+msgid "Devices"
+msgstr ""
+
+#: src/ribbonfm/ui/sidepanel.py:92
+msgid "Network"
+msgstr ""
+
+#: src/ribbonfm/ui/sidepanel.py:93
+msgid "Network locations"
+msgstr ""
+
+#: src/ribbonfm/ui/sidepanel.py:101
+msgid "File system"
+msgstr ""
+
+#: src/ribbonfm/ui/sidepanel.py:153 src/ribbonfm/ui/menus.py:37
+msgid "Open"
+msgstr ""
+
+#: src/ribbonfm/ui/sidepanel.py:154
+msgid "Add to bookmarks"
+msgstr ""
+
+#: src/ribbonfm/ui/sidepanel.py:156
+msgid "Remove bookmark"
+msgstr ""
+
+#: src/ribbonfm/ui/fileview.py:161 src/ribbonfm/ui/propsdialog.py:46
+msgid "Name"
+msgstr ""
+
+#: src/ribbonfm/ui/fileview.py:184 src/ribbonfm/ui/propsdialog.py:47
+msgid "Type"
+msgstr ""
+
+#: src/ribbonfm/ui/fileview.py:185 src/ribbonfm/ui/propsdialog.py:55
+msgid "Permissions"
+msgstr ""
+
+#: src/ribbonfm/ui/fileview.py:186 src/ribbonfm/ui/propsdialog.py:56
+msgid "Owner"
+msgstr ""
+
+#: src/ribbonfm/ui/fileview.py:187 src/ribbonfm/ui/propsdialog.py:57
+msgid "Group"
+msgstr ""
+
+#: src/ribbonfm/ui/fileview.py:190 src/ribbonfm/ui/propsdialog.py:49
+msgid "Size"
+msgstr ""
+
+#: src/ribbonfm/ui/fileview.py:192 src/ribbonfm/ui/propsdialog.py:50
+msgid "Modified"
+msgstr ""
+
+#: src/ribbonfm/ui/menus.py:38
+msgid "Open With..."
+msgstr ""
+
+#: src/ribbonfm/ui/menus.py:40
+msgid "Cut"
+msgstr ""
+
+#: src/ribbonfm/ui/menus.py:41
+msgid "Copy"
+msgstr ""
+
+#: src/ribbonfm/ui/menus.py:42
+msgid "Rename..."
+msgstr ""
+
+#: src/ribbonfm/ui/menus.py:44
+msgid "Move to Trash"
+msgstr ""
+
+#: src/ribbonfm/ui/menus.py:45
+msgid "Delete Permanently"
+msgstr ""
+
+#: src/ribbonfm/ui/menus.py:47 src/ribbonfm/ui/menus.py:72
+#: src/ribbonfm/ui/propsdialog.py:30
+msgid "Properties"
+msgstr ""
+
+#: src/ribbonfm/ui/menus.py:65 src/ribbonfm/ui/mainwindow.py:406
+#: src/ribbonfm/ui/mainwindow.py:407
+msgid "New Folder"
+msgstr ""
+
+#: src/ribbonfm/ui/menus.py:66 src/ribbonfm/ui/mainwindow.py:419
+msgid "New File"
+msgstr ""
+
+#: src/ribbonfm/ui/menus.py:68
+msgid "Paste"
+msgstr ""
+
+#: src/ribbonfm/ui/menus.py:69
+msgid "Select All"
+msgstr ""
+
+#: src/ribbonfm/ui/menus.py:71
+msgid "Refresh"
+msgstr ""
+
+#: src/ribbonfm/ui/propsdialog.py:48
+msgid "Location"
+msgstr ""
+
+#: src/ribbonfm/ui/propsdialog.py:58
+msgid "Octal mode"
+msgstr ""
+
+#: src/ribbonfm/ui/propsdialog.py:62
+msgid ""
+"This location is writable by all users or is managed with elevated "
+"privileges."
+msgstr ""
+
+#: src/ribbonfm/ui/propsdialog.py:94
+msgid "Change permissions"
+msgstr ""
+
+#: src/ribbonfm/ui/propsdialog.py:102
+msgid "Octal mode, e.g. 755"
+msgstr ""
+
+#: src/ribbonfm/ui/propsdialog.py:110
+msgid "Invalid octal mode"
+msgstr ""
+
+#: src/ribbonfm/ui/propsdialog.py:111
+msgid "Use a value such as 755."
+msgstr ""
+
+#: src/ribbonfm/ui/propsdialog.py:117
+msgid "Permissions updated."
+msgstr ""
+
+#: src/ribbonfm/ui/propsdialog.py:119
+msgid "Apply"
+msgstr ""
+
+#: src/ribbonfm/ui/propsdialog.py:129
+#, python-brace-format
+msgid "Symbolic link to {target}"
+msgstr ""
+
+#: src/ribbonfm/ui/propsdialog.py:131
+msgid "Folder"
+msgstr ""
+
+#: src/ribbonfm/ui/propsdialog.py:132
+msgid "Drive"
+msgstr ""
+
+#: src/ribbonfm/ui/propsdialog.py:133
+msgid "Symbolic link"
+msgstr ""
+
+#: src/ribbonfm/ui/propsdialog.py:134
+msgid "File"
+msgstr ""
+
+#: src/ribbonfm/ui/propsdialog.py:140
+msgid "(folder)"
+msgstr ""
+
+#: src/ribbonfm/ui/mainwindow.py:120 src/ribbonfm/ui/mainwindow.py:162
+msgid "Cannot open folder"
+msgstr ""
+
+#: src/ribbonfm/ui/mainwindow.py:121
+#, python-brace-format
+msgid "This location is not a readable directory: {path}"
+msgstr ""
+
+#: src/ribbonfm/ui/mainwindow.py:163
+#, python-brace-format
+msgid "The folder could not be read. {err}"
+msgstr ""
+
+#: src/ribbonfm/ui/mainwindow.py:279
+msgid "Not implemented yet"
+msgstr ""
+
+#: src/ribbonfm/ui/mainwindow.py:280
+#, python-brace-format
+msgid "The '{action}' action is a placeholder."
+msgstr ""
+
+#: src/ribbonfm/ui/mainwindow.py:324
+msgid "Some items were not pasted"
+msgstr ""
+
+#: src/ribbonfm/ui/mainwindow.py:327
+#, python-brace-format
+msgid "Pasted {n} item(s)"
+msgstr ""
+
+#: src/ribbonfm/ui/mainwindow.py:339
+#, python-brace-format
+msgid "Move {n} item(s) to Trash?"
+msgstr ""
+
+#: src/ribbonfm/ui/mainwindow.py:356
+msgid "Some items could not be moved to Trash"
+msgstr ""
+
+#: src/ribbonfm/ui/mainwindow.py:364
+#, python-brace-format
+msgid "Permanently delete {n} item(s)?"
+msgstr ""
+
+#: src/ribbonfm/ui/mainwindow.py:365
+msgid "This cannot be undone."
+msgstr ""
+
+#: src/ribbonfm/ui/mainwindow.py:381
+msgid "Some items could not be deleted"
+msgstr ""
+
+#: src/ribbonfm/ui/mainwindow.py:393
+msgid "Rename"
+msgstr ""
+
+#: src/ribbonfm/ui/mainwindow.py:393
+msgid "New name:"
+msgstr ""
+
+#: src/ribbonfm/ui/mainwindow.py:403
+msgid "Rename failed"
+msgstr ""
+
+#: src/ribbonfm/ui/mainwindow.py:406
+msgid "Folder name:"
+msgstr ""
+
+#: src/ribbonfm/ui/mainwindow.py:416
+msgid "Could not create folder"
+msgstr ""
+
+#: src/ribbonfm/ui/mainwindow.py:419
+msgid "File name:"
+msgstr ""
+
+#: src/ribbonfm/ui/mainwindow.py:420
+msgid "New File.txt"
+msgstr ""
+
+#: src/ribbonfm/ui/mainwindow.py:429
+msgid "Could not create file"
+msgstr ""
+
+#: src/ribbonfm/ui/mainwindow.py:454
+msgid "Could not open this file"
+msgstr ""
+
+#: src/ribbonfm/ui/mainwindow.py:467
+msgid "No application found"
+msgstr ""
+
+#: src/ribbonfm/ui/mainwindow.py:468
+msgid "There is no registered application for this type."
+msgstr ""
+
+#: src/ribbonfm/ui/mainwindow.py:478
+msgid "Could not open terminal"
+msgstr ""
+
+#: src/ribbonfm/app.py:54
+msgid "Language changed"
+msgstr ""
+
+#: src/ribbonfm/app.py:55
+msgid "Please restart the application for the change to take effect."
+msgstr ""

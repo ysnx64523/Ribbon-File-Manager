@@ -307,10 +307,30 @@ def compile_mo(po_path: Path) -> Path:
     return mo
 
 
+def _ensure_pot() -> None:
+    """Generate the template from sources if it is missing (e.g. in CI).
+
+    Falls back silently: the translation dict still provides the curated keys,
+    and any source strings not in the POT simply fall back to English.
+    """
+    if POT.exists():
+        return
+    try:
+        import subprocess
+        files = [str(p) for p in sorted(ROOT.joinpath("src").rglob("*.py"))]
+        subprocess.run(
+            ["xgettext", "-L", "Python", "--keyword=_", "--keyword=_:1",
+             "-d", "ribbonfm", "-o", str(POT), *files],
+            check=True, capture_output=True, text=True)
+    except Exception:
+        # POT is optional; generation continues with the translation dict.
+        POT.parent.mkdir(parents=True, exist_ok=True)
+        if not POT.exists():
+            POT.write_text('msgid ""\nmsgstr ""\n', encoding="utf-8")
+
+
 def main() -> int:
-    if not POT.exists():
-        print("POT not found:", POT)
-        return 1
+    _ensure_pot()
     for lang, translations in TRANSLATIONS.items():
         po = ROOT / "po" / f"{lang}.po"
         po.write_text(generate(lang, translations), encoding="utf-8")
