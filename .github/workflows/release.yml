@@ -1,0 +1,80 @@
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  linux:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install build tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y python3-pip python3-venv dpkg-dev file \
+            python3-gi python3-gi-cairo libgirepository1.0-dev gir1.2-gtk-3.0
+          python3 -m pip install --upgrade pip
+      - name: Install appimagetool
+        run: |
+          curl -L -o /usr/local/bin/appimagetool \
+            https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage
+          chmod +x /usr/local/bin/appimagetool
+      - name: Build .deb
+        run: bash pack/linux/build_deb.sh
+      - name: Build AppImage
+        run: bash pack/appimage/build.sh
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux
+          path: |
+            build/RibbonFM_*.deb
+            dist/RibbonFileManager-*-x86_64.AppImage
+
+  windows:
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: msys2 {0}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: msys2/setup-msys2@v2
+        with:
+          msystem: MINGW64
+          install: >-
+            mingw-w64-x86_64-gtk3
+            mingw-w64-x86_64-python
+            mingw-w64-x86_64-python-pip
+            mingw-w64-x86_64-python-gobject
+            mingw-w64-x86_64-pyinstaller
+      - name: Build portable ZIP
+        run: python pack/windows/build_portable.py
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows
+          path: dist/RibbonFM-*-windows-x86_64.zip
+
+  release:
+    needs: [linux, windows]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          path: release
+      - name: List artifacts
+        run: find release -type f | sed 's#release/##'
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          generate_release_notes: true
+          files: |
+            release/linux/**.deb
+            release/linux/**.AppImage
+            release/windows/**.zip

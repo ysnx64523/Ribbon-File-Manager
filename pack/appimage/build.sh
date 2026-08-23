@@ -12,8 +12,10 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
-VERSION="$(cd "$ROOT" && python3 -c 'import sys; sys.path.insert(0,"src"); import ribbonfm; print(ribbonfm.__version__)')"
+VERSION="$(sed -n 's/^version = "\(.*\)"/\1/p' "$ROOT/pyproject.toml" | head -1)"
+[ -n "$VERSION" ] || VERSION="0.1.0"
 APPIMAGE_TOOL="${APPIMAGE_TOOL:-appimagetool}"
+VENV="$ROOT/build/appimage-venv"
 
 BUILD="$ROOT/build/appimage/AppDir"
 STAGE="$ROOT/dist"
@@ -23,8 +25,10 @@ rm -rf "$BUILD" "$STAGE"
 mkdir -p "$BUILD" "$STAGE" "$BUILD/usr/bin" "$BUILD/usr/share/applications" \
          "$BUILD/usr/share/icons/hicolor/scalable/apps" "$BUILD/usr/share/metainfo"
 
-# Install the Python package into a staging prefix
-python3 -m pip install --prefix "$BUILD/usr" "$ROOT"
+# Install the Python package into a staging prefix (venv avoids PEP 668).
+python3 -m venv "$VENV"
+"$VENV/bin/python" -m pip install --quiet --upgrade pip
+"$VENV/bin/python" -m pip install --quiet --prefix "$BUILD/usr" "$ROOT"
 
 # Desktop file and icon
 cp "$ROOT/data/org.ribbonfm.RibbonFM.desktop" "$BUILD/usr/share/applications/"
