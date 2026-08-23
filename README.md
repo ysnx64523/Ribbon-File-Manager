@@ -2,58 +2,72 @@
 
 A cross-platform file manager with a **Windows-Explorer-like Ribbon toolbar**,
 written in Python with **GTK3 (PyGObject)**. It runs natively on Linux and is
-designed to be portable to Windows .
+designed to be portable to macOS and Windows.
 
-![Languages: en, zh_CN](https://img.shields.io/badge/i18n-en%20%7C%20zh__CN-blue) · License: [Apache-2.0](LICENSE) · UI toolkit: GTK3
+![i18n: en, zh_CN](https://img.shields.io/badge/i18n-en%20%7C%20zh__CN-blue)
+![License: Apache-2.0](LICENSE)
+![UI: GTK3](https://img.shields.io/badge/UI-GTK3-blue)
 
 > **Python**: built and tested on **Python 3.14** with GTK3 3.24 + PyGObject.
-> Also runs on Python 3.8+ (see `pyproject.toml`) wherever a matching PyGObject
-> is available for the interpreter.
+> Also runs on Python 3.8+ (`pyproject.toml`) wherever a matching PyGObject is
+> available for the interpreter.
 
 ---
 
 ## Features
 
 ### Ribbon UI (custom, GTK3)
-- Tab strip built from `Gtk.Stack` + `Gtk.StackSwitcher`.
+- Tab strip from `Gtk.Stack` + `Gtk.StackSwitcher`.
 - Tabs: **File** (backstage menu), **Home**, **Share**, **View**, **Manage**.
 - Large (icon-over-label) and small (icon-beside-label) buttons in groups.
-- Collapse/expand the whole Ribbon with one click; `Ctrl`+scroll zooms the view
-  (icon size / layout), like Windows Explorer.
+- Collapse/expand the whole Ribbon; **Ctrl + scroll** zooms the view (icon size
+  / layout), like Windows Explorer.
 - Quick-access toolbar next to the title.
 
 ### Navigation
-- Back / Forward / Up / Refresh, **breadcrumb** bar and a toggle to an
+- Back / Forward / Up / Refresh, **breadcrumb** bar with a toggle to an
   **editable address entry**.
-- Sidebar with **Places**, **Bookmarks**, **Devices** (mounts) and a **Network**
-  placeholder. Bookmarks persist to `~/.config/ribbonfm/`.
+- Sidebar: **Places**, **Bookmarks**, **Devices** (a disk→volumes tree), and a
+  **Network** placeholder. Bookmarks persist to `~/.config/ribbonfm/`.
+- Unmounted disks can be **mounted on click**; real mount points are listed even
+  where `Gio.VolumeMonitor` reports none.
 
 ### Views
-- Large icons, small icons, list, **details** (name/size/type/mtime/permissions/
-  owner/group), thumbnails (icon view).
-- Sort by name/size/type/mtime; directories always first.
-- Group by type; in-folder search/filter; show hidden files.
-- Selection modes: click, rubber-band, **Select All**, **Invert Selection**.
+- Icon modes: extra large / large / medium / small / tiles (real icon resizing),
+  plus list, details, content and thumbnail.
+- Sort by name/size/type/mtime; directories always first; group by type.
+- In-folder search/filter; show hidden files; **view toggles** for item
+  checkboxes and file extensions.
+- Multi-select (rubber-band, Ctrl/Shift) with **Select All / None / Invert**;
+  optional **checkbox column**.
+- **Drag & drop**: drag files/folders (also cross-application via
+  `text/uri-list`) onto folder rows or the background; Ctrl-drag moves.
 
-### File operations (with async I/O)
-- New folder / new file, cut / copy / paste, rename, **move to Trash**
+### File operations (async I/O)
+- New folder / file, cut / copy / paste, rename, **move to Trash**
   (`Gio.File.trash`), permanent delete, properties.
-- Open with the default app, or **Open With…** (`Gio.AppInfo`).
-- Right-click menus for items and for the folder background.
+- Open with default app, or **Open With…** — lists all installed apps, searchable,
+  with **custom program path** selection.
+- Right-click context menus for items and the folder background.
+- **Open Terminal** launches the system default terminal in the current folder.
+
+### Properties page (Windows-style)
+- Tabbed dialog: **General / Security / Details** with object name, a permission
+  matrix (owner/group/other × r/w/x), octal-mode editor, size and timestamps.
+- Opens as a **non-modal** window so you can keep working.
 
 ### Permissions & privilege escalation
-- Displays `rwx`, octal mode, owner and group in list/details and properties.
-- **Never runs elevated.** Privileged operations (`chmod`/`chown`, protected
-  writes) escalate through the OS secure mechanism: `pkexec` (Linux), UAC
-  `runas` helper (Windows), Authorization Services (macOS).
-- Handles `777` without refusing it, but warns; read-only mounts are detected
-  and reported.
-- See [`doc/SECURITY.md`](doc/SECURITY.md) for the full model.
+- Displays `rwx`, octal mode, owner/group in views and properties.
+- **Never runs elevated.** Privileged ops (`chmod`/`chown`) escalate per action:
+  `pkexec` (Linux), UAC `runas` (Windows), Authorization Services (macOS).
+- `777` is not refused (just warned); read-only mounts are detected.
+- See [`doc/SECURITY.md`](doc/SECURITY.md).
 
 ### i18n
-- Every string through gettext `_()`; ship `en` + `zh_CN`, extensible.
-- Runtime language switch (asks to restart) and automatic locale detection.
-- Localised numbers, dates and sizes.
+- All strings through gettext `_()`; ships `en` + `zh_CN`, extensible.
+- Automatic locale detection + runtime language switch (restart to refresh).
+
+---
 
 ## Getting started
 
@@ -66,23 +80,11 @@ python tools/gen_po.py          # build translation catalogs
 ribbonfm                        # or: python -m ribbonfm
 ```
 
-`--system-site-packages` is used so the venv can see the distribution's GTK
-bindings (`gi`). If you prefer an isolated venv, install PyGObject for your
-interpreter first (e.g. `apt install python3-gi`).
+`--system-site-packages` lets the venv see the distribution's GTK bindings
+(`gi`). For an isolated venv, install PyGObject for your interpreter first
+(e.g. `apt install python3-gi`).
 
-See [`doc/INSTALL.md`](doc/INSTALL.md) for Linux/Windows/macOS details and
-[`pack/`](pack/) for Flatpak, AppImage, PyInstaller and Homebrew packaging.
-
-## Project layout
-
-```
-src/ribbonfm/     application (core/ logic separated from ui/ widgets)
-data/             desktop file, icon, AppStream metadata
-doc/              install, architecture, security docs
-pack/             flatpak, appimage, windows, macos packaging
-po/               gettext catalogs + generator (tools/gen_po.py)
-tests/            unit tests (no display required)
-```
+---
 
 ## Testing
 
@@ -90,14 +92,52 @@ tests/            unit tests (no display required)
 python -m unittest discover -s tests -v
 ```
 
+Core tests only need `gi` (Gio/GLib) and no display; CI runs them on the system
+python3 after `apt install python3-gi`.
+
+---
+
+## Building releases
+
+| Platform | Output | How |
+| --- | --- | --- |
+| Linux `.deb` (self-contained) | `build/deb/RibbonFM_*.deb` | `bash pack/linux/build_deb.sh` |
+| Linux `AppImage` | `dist/RibbonFileManager-*.AppImage` | `bash pack/appimage/build.sh` |
+| Windows portable ZIP | `dist/RibbonFM-*-windows-x86_64.zip` | `python pack/windows/build_portable.py` (MSYS2) |
+
+CI/CD (`.github/workflows/`):
+- `ci.yml` — lint (flake8), tests, Glade/compile validation.
+- `release.yml` — on `v*` tags builds the `.deb`, `AppImage` and Windows ZIP and
+  attaches them to a GitHub Release.
+
+---
+
+## Project layout
+
+```
+src/ribbonfm/     application (core/ logic separated from ui/ widgets)
+  core/           pathutils, files, perm, mounts, sorts, tasks (async)
+  ui/             mainwindow, navigation, ops, ribbon, fileview, propsdialog...
+  resources/      *.glade (GtkBuilder), css, locale/<lang>/*.mo
+data/             desktop file, icon, AppStream metadata
+pack/             flatpak, appimage, linux(deb/pyinstaller), windows, macos
+doc/              install, architecture, security docs
+po/               gettext catalogs + generator (tools/gen_po.py)
+tests/            unit tests (no display required)
+INDEX.md          auditable code index (regenerate: python tools/gen_index.py)
+```
+
 ## Translations
 
-Add a language to `TRANSLATIONS` in [`tools/gen_po.py`](tools/gen_po.py), then:
+Add a language to `TRANSLATIONS` in `tools/gen_po.py`, then:
 
 ```sh
 python tools/gen_po.py
 ```
 
+---
+
 ## License
 
-[Apache License 2.0](LICENSE). GTK3 / PyGObject are LGPL; 
+[Apache License 2.0](LICENSE). GTK3 / PyGObject are LGPL; this project contains
+**no GPL code**.
