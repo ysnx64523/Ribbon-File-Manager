@@ -19,6 +19,9 @@ echo "== Prepare build venv (system site packages => gi available) =="
 python3 -m venv --system-site-packages "$VENV"
 "$VENV/bin/python" -m pip install --quiet --upgrade pip pyinstaller
 
+echo "== Build translation catalogs (so .mo are bundled) =="
+"$VENV/bin/python" "$ROOT/tools/gen_po.py"
+
 echo "== PyInstaller (bundled GTK/PyGObject) =="
 "$VENV/bin/python" -m PyInstaller "$ROOT/pack/linux/ribbonfm_linux.spec" \
   --distpath "$ROOT/build/pyinstaller" \

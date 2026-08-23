@@ -21,6 +21,29 @@ class RibbonFMApp(Gtk.Application):
         self._start_path = start_path
         self._window: "MainWindow | None" = None
         self._apply_css()
+        self._add_system_icon_paths()
+
+    def _add_system_icon_paths(self) -> None:
+        """Follow the host's icon theme (needed when running from a bundle).
+
+        A self-contained AppImage/deb ships its own GTK but the icon theme should
+        come from the system, so append the usual XDG icon directories to the
+        default icon theme search path.
+        """
+        import os
+        try:
+            theme = Gtk.IconTheme.get_default()
+        except Exception:
+            return
+        for d in ("/usr/share/icons", "/usr/local/share/icons",
+                  "/usr/share/pixmaps",
+                  os.path.expanduser("~/.local/share/icons"),
+                  os.path.expanduser("~/.icons")):
+            try:
+                if os.path.isdir(d):
+                    theme.append_search_path(d)
+            except Exception:
+                pass
 
     def _apply_css(self) -> None:
         provider = Gtk.CssProvider()
