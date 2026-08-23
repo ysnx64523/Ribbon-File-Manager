@@ -48,11 +48,11 @@ TABS = [
                 _btn("paste", "paste", "edit-paste", "paste", large=False),
             ], columns=1),
             _group("group_organize", [
-                _btn("move_to", "move_to", "folder", "move_to", large=False),
-                _btn("copy_to", "copy_to", "edit-copy", "copy_to", large=False),
-                _btn("delete", "delete", "user-trash", "delete", large=False),
-                _btn("rename", "rename", "edit-rename", "rename", large=False),
-            ]),
+                _btn("move_to", "move_to", "folder", "move_to"),
+                _btn("copy_to", "copy_to", "edit-copy", "copy_to"),
+                _btn("delete", "delete", "user-trash", "delete"),
+                _btn("rename", "rename", "edit-rename", "rename"),
+            ], large=True),
             _group("group_new", [
                 _btn("new_folder", "new_folder", "folder-new", "new_folder"),
                 _btn("new_item", "new_item", "document-new", "new_file"),

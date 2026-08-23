@@ -201,53 +201,113 @@
                 <property name="hexpand">True</property>
                 <property name="vexpand">True</property>
                 <child>
-                  <object class="GtkStack" id="view_stack">
+                  <object class="GtkPaned" id="content_paned">
                     <property name="visible">True</property>
                     <property name="hexpand">True</property>
                     <property name="vexpand">True</property>
+                    <property name="position">760</property>
                     <child>
-                      <object class="GtkScrolledWindow" id="scroll_tree">
+                      <object class="GtkStack" id="view_stack">
                         <property name="visible">True</property>
                         <property name="hexpand">True</property>
                         <property name="vexpand">True</property>
-                        <property name="shadow-type">in</property>
                         <child>
-                          <object class="GtkTreeView" id="file_view">
+                          <object class="GtkScrolledWindow" id="scroll_tree">
                             <property name="visible">True</property>
                             <property name="hexpand">True</property>
                             <property name="vexpand">True</property>
-                            <property name="enable-grid-lines">none</property>
-                            <property name="rules-hint">True</property>
-                            <property name="enable-search">True</property>
-                            <property name="reorderable">False</property>
-                            <property name="show-expanders">True</property>
+                            <property name="shadow-type">in</property>
+                            <child>
+                              <object class="GtkTreeView" id="file_view">
+                                <property name="visible">True</property>
+                                <property name="hexpand">True</property>
+                                <property name="vexpand">True</property>
+                                <property name="enable-grid-lines">none</property>
+                                <property name="rules-hint">True</property>
+                                <property name="enable-search">True</property>
+                                <property name="reorderable">False</property>
+                                <property name="show-expanders">True</property>
+                              </object>
+                            </child>
                           </object>
+                          <packing>
+                            <property name="name">tree</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkScrolledWindow" id="scroll_icons">
+                            <property name="visible">True</property>
+                            <property name="hexpand">True</property>
+                            <property name="vexpand">True</property>
+                            <property name="shadow-type">in</property>
+                            <child>
+                              <object class="GtkIconView" id="icon_view">
+                                <property name="visible">True</property>
+                                <property name="hexpand">True</property>
+                                <property name="vexpand">True</property>
+                                <property name="selection-mode">multiple</property>
+                                <property name="item-padding">4</property>
+                                <property name="margin">6</property>
+                              </object>
+                            </child>
+                          </object>
+                          <packing>
+                            <property name="name">icons</property>
+                          </packing>
                         </child>
                       </object>
-                      <packing>
-                        <property name="name">tree</property>
-                      </packing>
                     </child>
                     <child>
-                      <object class="GtkScrolledWindow" id="scroll_icons">
+                      <!-- Right-hand info pane: preview + details -->
+                      <object class="GtkBox" id="info_pane">
                         <property name="visible">True</property>
-                        <property name="hexpand">True</property>
-                        <property name="vexpand">True</property>
-                        <property name="shadow-type">in</property>
+                        <property name="orientation">vertical</property>
+                        <property name="width-request">240</property>
                         <child>
-                          <object class="GtkIconView" id="icon_view">
+                          <object class="GtkScrolledWindow" id="preview_pane">
                             <property name="visible">True</property>
-                            <property name="hexpand">True</property>
-                            <property name="vexpand">True</property>
-                            <property name="selection-mode">multiple</property>
-                            <property name="item-padding">4</property>
-                            <property name="margin">6</property>
+                            <property name="vscrollbar-policy">never</property>
+                            <property name="shadow-type">in</property>
+                            <child>
+                              <object class="GtkBox" id="preview_box">
+                                <property name="visible">True</property>
+                                <property name="orientation">vertical</property>
+                                <property name="hexpand">True</property>
+                                <property name="vexpand">True</property>
+                                <child>
+                                  <object class="GtkImage" id="preview_image">
+                                    <property name="visible">True</property>
+                                    <property name="pixel-size">200</property>
+                                    <property name="halign">center</property>
+                                    <property name="valign">center</property>
+                                  </object>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel" id="preview_label">
+                                    <property name="visible">True</property>
+                                    <property name="wrap">True</property>
+                                    <property name="xalign">0.5</property>
+                                  </object>
+                                </child>
+                              </object>
+                            </child>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkScrolledWindow" id="details_pane">
+                            <property name="visible">True</property>
+                            <property name="shadow-type">in</property>
+                            <child>
+                              <object class="GtkGrid" id="details_grid">
+                                <property name="visible">True</property>
+                                <property name="column-spacing">10</property>
+                                <property name="row-spacing">6</property>
+                                <property name="margin">8</property>
+                              </object>
+                            </child>
                           </object>
                         </child>
                       </object>
-                      <packing>
-                        <property name="name">icons</property>
-                      </packing>
                     </child>
                   </object>
                 </child>

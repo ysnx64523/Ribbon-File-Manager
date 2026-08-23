@@ -91,5 +91,4 @@ python tools/gen_po.py
 
 ## License
 
-[Apache License 2.0](LICENSE). GTK3 / PyGObject are LGPL; this project contains
-**no GPL code**.
+[Apache License 2.0](LICENSE). GTK3 / PyGObject are LGPL; 

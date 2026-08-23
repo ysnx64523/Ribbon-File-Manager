@@ -31,9 +31,8 @@ _SORT_MODES = ("name", "size", "type", "mtime")
 
 # View-tab toggles/placeholders that only flip their checked state (no dialog).
 _QUIET_TOGGLES = {
-    "checkboxes", "file_extensions", "preview_pane", "details_pane",
-    "add_columns", "fit_columns", "sort_by", "hide_selected", "selected_items",
-    "hidden_extra",
+    "checkboxes", "file_extensions", "add_columns", "fit_columns", "sort_by",
+    "hide_selected", "selected_items", "hidden_extra",
 }
 
 
@@ -74,6 +73,14 @@ class MainWindow(Gtk.ApplicationWindow, NavigationMixin, FileOpsMixin):
         self._tree = b.get_object("file_view")
         self._icons = b.get_object("icon_view")
         self._status = b.get_object("status_bar")
+        self._info_pane = b.get_object("info_pane")
+        self._preview_pane = b.get_object("preview_pane")
+        self._preview_image = b.get_object("preview_image")
+        self._preview_label = b.get_object("preview_label")
+        self._details_pane = b.get_object("details_pane")
+        self._details_grid = b.get_object("details_grid")
+        self._preview_on = True
+        self._details_on = True
 
     def _build_children(self) -> None:
         self._file_view = FileView(
@@ -92,6 +99,11 @@ class MainWindow(Gtk.ApplicationWindow, NavigationMixin, FileOpsMixin):
         self._sidebar = Sidebar(
             self._sidebar_container, lambda path: self.navigate(path))
         self._search.connect("search-changed", self._on_search_changed)
+
+        self._file_view._tree.get_selection().connect(
+            "changed", self._on_view_selection_changed)
+        self._file_view._icons.connect(
+            "selection-changed", self._on_view_selection_changed)
 
     # --- directory loading ----------------------------------------------------
 
@@ -140,6 +152,86 @@ class MainWindow(Gtk.ApplicationWindow, NavigationMixin, FileOpsMixin):
     def _on_search_changed(self, entry) -> None:
         self._file_view.set_filter(entry.get_text())
 
+    # --- right info pane (preview / details) -------------------------------
+
+    def _on_view_selection_changed(self, *_):
+        paths = self._file_view.selected_paths()
+        if paths:
+            self._update_info_pane(paths[0])
+        else:
+            self._clear_info_pane()
+
+    def _toggle_pane(self, kind: str) -> None:
+        if kind == "preview":
+            self._preview_on = not self._preview_on
+        else:
+            self._details_on = not self._details_on
+        self._preview_pane.set_visible(self._preview_on)
+        self._details_pane.set_visible(self._details_on)
+        self._info_pane.set_visible(self._preview_on or self._details_on)
+        self._on_view_selection_changed()
+
+    def _clear_info_pane(self) -> None:
+        self._preview_image.clear()
+        self._preview_label.set_text("")
+        for c in self._details_grid.get_children():
+            self._details_grid.remove(c)
+
+    def _update_info_pane(self, path: str) -> None:
+        from gi.repository import GdkPixbuf as _GP
+        self._preview_label.set_text(os.path.basename(path))
+        self._preview_image.clear()
+        try:
+            entry = files.entry_for_path(path)
+        except Exception:  # noqa: BLE001
+            entry = None
+        ctype = entry.content_type if entry else ""
+        if ctype and ctype.startswith("image/"):
+            try:
+                pix = _GP.Pixbuf.new_from_file_at_scale(path, 240, 240, True)
+                self._preview_image.set_from_pixbuf(pix)
+            except Exception:  # noqa: BLE001
+                self._preview_image.set_from_icon_name("image-x-generic", Gtk.IconSize.DIALOG)
+        else:
+            icon = "folder" if (entry and entry.is_dir) else "text-x-generic"
+            self._preview_image.set_from_icon_name(icon, Gtk.IconSize.DIALOG)
+        self._fill_details(path)
+
+    def _fill_details(self, path: str) -> None:
+        grid = self._details_grid
+        for c in list(grid.get_children()):
+            grid.remove(c)
+        try:
+            entry = files.entry_for_path(path)
+        except Exception:  # noqa: BLE001
+            entry = None
+        hint = perm.inspect(path)
+        rows = [
+            (i18n._("Name"), os.path.basename(path)),
+            (i18n._("Type"), (entry.content_type if entry else "") or ""),
+            (i18n._("Size"), _size_human(entry.size) if entry else ""),
+            (i18n._("Modified"), _ts(entry.mtime) if entry else ""),
+            (i18n._("Permissions"), hint.rwx),
+            (i18n._("Owner"), hint.user_name),
+            (i18n._("Group"), hint.group_name),
+            (i18n._("Path"), path),
+        ]
+        row = 0
+        for key, val in rows:
+            k = Gtk.Label(label=key)
+            k.set_xalign(0)
+            k.get_style_context().add_class("prop-key")
+            v = Gtk.Label(label=val or "—")
+            v.set_xalign(0)
+            v.set_selectable(True)
+            v.set_ellipsize(3)
+            v.set_hexpand(True)
+            v.set_wrap(False)
+            grid.attach(k, 0, row, 1, 1)
+            grid.attach(v, 1, row, 1, 1)
+            row += 1
+        grid.show_all()
+
     def _on_file_activated(self, path: str) -> None:
         self.open_path(path)
 
@@ -168,6 +260,14 @@ class MainWindow(Gtk.ApplicationWindow, NavigationMixin, FileOpsMixin):
                 self.refresh()
             elif key == "nav_pane":
                 self._toggle_nav_pane()
+            elif key == "preview_pane":
+                self._toggle_pane("preview")
+            elif key == "details_pane":
+                self._toggle_pane("details")
+            return
+
+        if action in ("preview_pane", "details_pane"):
+            self._toggle_pane("preview" if action == "preview_pane" else "details")
             return
 
         if action in _QUIET_TOGGLES:
@@ -269,3 +369,21 @@ class MainWindow(Gtk.ApplicationWindow, NavigationMixin, FileOpsMixin):
 # Keep default state attributes available (set by mixins at runtime).
 MainWindow._sort_mode = "name"
 MainWindow._sort_ascending = True
+
+
+def _size_human(size: int) -> str:
+    s = float(size)
+    units = ["B", "KB", "MB", "GB", "TB"]
+    u = 0
+    while s >= 1024 and u < len(units) - 1:
+        s /= 1024
+        u += 1
+    return f"{int(s)} {units[u]}" if u == 0 else f"{s:.1f} {units[u]}"
+
+
+def _ts(epoch: int) -> str:
+    if not epoch:
+        return ""
+    import datetime
+
+    return datetime.datetime.fromtimestamp(epoch).strftime("%Y-%m-%d %H:%M")
