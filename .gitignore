@@ -31,6 +31,9 @@ MANIFEST
 #   before PyInstaller builds the exe, so as to inject date/other infos into it.
 *.manifest
 *.spec
+# ...but the hand-authored specs under pack/ are meant to be committed.
+!pack/linux/*.spec
+!pack/windows/*.spec
 
 # Installer logs
 pip-log.txt
