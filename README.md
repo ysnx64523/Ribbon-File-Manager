@@ -6,15 +6,20 @@ designed to be portable to Windows .
 
 ![Languages: en, zh_CN](https://img.shields.io/badge/i18n-en%20%7C%20zh__CN-blue) · License: [Apache-2.0](LICENSE) · UI toolkit: GTK3
 
+> **Python**: built and tested on **Python 3.14** with GTK3 3.24 + PyGObject.
+> Also runs on Python 3.8+ (see `pyproject.toml`) wherever a matching PyGObject
+> is available for the interpreter.
+
 ---
 
 ## Features
 
 ### Ribbon UI (custom, GTK3)
 - Tab strip built from `Gtk.Stack` + `Gtk.StackSwitcher`.
-- Tabs: **Home**, **View**, **Manage**.
+- Tabs: **File** (backstage menu), **Home**, **Share**, **View**, **Manage**.
 - Large (icon-over-label) and small (icon-beside-label) buttons in groups.
-- Collapse/expand the whole Ribbon with one click.
+- Collapse/expand the whole Ribbon with one click; `Ctrl`+scroll zooms the view
+  (icon size / layout), like Windows Explorer.
 - Quick-access toolbar next to the title.
 
 ### Navigation
@@ -53,13 +58,17 @@ designed to be portable to Windows .
 ## Getting started
 
 ```sh
-# Linux: install GTK3 + PyGObject, then:
-python3 -m venv .venv
+# Linux: install GTK3 + PyGObject (system package), then:
+python3 -m venv --system-site-packages .venv
 source .venv/bin/activate
 pip install -e . pytest
 python tools/gen_po.py          # build translation catalogs
 ribbonfm                        # or: python -m ribbonfm
 ```
+
+`--system-site-packages` is used so the venv can see the distribution's GTK
+bindings (`gi`). If you prefer an isolated venv, install PyGObject for your
+interpreter first (e.g. `apt install python3-gi`).
 
 See [`doc/INSTALL.md`](doc/INSTALL.md) for Linux/Windows/macOS details and
 [`pack/`](pack/) for Flatpak, AppImage, PyInstaller and Homebrew packaging.
