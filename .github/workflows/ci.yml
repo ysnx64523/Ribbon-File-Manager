@@ -49,8 +49,8 @@ jobs:
       - name: Validate Glade UI (GtkBuilder parse)
         run: |
           sudo apt-get update
-          sudo apt-get install -y python3-gi gir1.2-gtk-3.0
-          python3 - <<'PY'
+          sudo apt-get install -y python3-gi gir1.2-gtk-3.0 xvfb
+          xvfb-run -a python3 - <<'PY'
           import gi
           gi.require_version("Gtk", "3.0")
           from gi.repository import Gtk
