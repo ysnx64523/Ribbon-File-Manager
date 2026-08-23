@@ -1,0 +1,46 @@
+{
+  "app-id": "org.ribbonfm.RibbonFM",
+  "runtime": "org.gnome.Platform",
+  "runtime-version": "46",
+  "sdk": "org.gnome.Sdk",
+  "command": "ribbonfm",
+  "finish-args": [
+    "--share=ipc",
+    "--socket=x11",
+    "--socket=wayland",
+    "--share=network",
+    "--device=dri",
+    "--filesystem=home",
+    "--filesystem=xdg-run/gvfs",
+    "--talk-name=org.freedesktop.Flatpak",
+    "--talk-name=org.freedesktop.DBus",
+    "--talk-name=org.gnome.Shell",
+    "--system-talk-name=org.freedesktop.UDisks2",
+    "--system-talk-name=org.freedesktop.UDisk2"
+  ],
+  "cleanup": [
+    "/include",
+    "/lib/pkgconfig",
+    "/share/aclocal",
+    "/share/doc"
+  ],
+  "modules": [
+    {
+      "name": "ribbonfm",
+      "buildsystem": "simple",
+      "build-options": { "no-debuginfo": true },
+      "build-commands": [
+        "pip3 install --prefix=/app --no-deps .",
+        "install -Dm644 data/org.ribbonfm.RibbonFM.desktop /app/share/applications/org.ribbonfm.RibbonFM.desktop",
+        "install -Dm644 data/org.ribbonfm.RibbonFM.svg /app/share/icons/hicolor/scalable/apps/org.ribbonfm.RibbonFM.svg",
+        "install -Dm644 data/org.ribbonfm.RibbonFM.metainfo.xml /app/share/metainfo/org.ribbonfm.RibbonFM.metainfo.xml"
+      ],
+      "sources": [
+        {
+          "type": "dir",
+          "path": "."
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Ribbon File Manager - main window layout.
+     Loaded with Gtk.Builder. Widgets referenced by id: id (name). -->
+<interface>
+  <requires lib="gtk+" version="3.24"/>
+  <object class="GtkApplicationWindow" id="main_window">
+    <property name="visible">True</property>
+    <property name="can_focus">True</property>
+    <property name="title">Ribbon File Manager</property>
+    <property name="default-width">1080</property>
+    <property name="default-height">720</property>
+    <signal name="destroy" handler="on_window_destroy"/>
+    <child>
+      <object class="GtkBox" id="root_box">
+        <property name="visible">True</property>
+        <property name="orientation">vertical</property>
+        <property name="spacing">0</property>
+        <child>
+          <!-- ===== Ribbon header ===== -->
+          <object class="GtkBox" id="header_box">
+            <property name="visible">True</property>
+            <property name="orientation">vertical</property>
+            <child>
+              <object class="GtkBox" id="title_row">
+                <property name="visible">True</property>
+                <property name="spacing">4</property>
+                <child>
+                  <object class="GtkImage" id="app_icon">
+                    <property name="visible">True</property>
+                    <property name="icon-name">system-file-manager</property>
+                    <property name="pixel-size">20</property>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkLabel" id="app_title_label">
+                    <property name="visible">True</property>
+                    <property name="xalign">0</property>
+                    <property name="label">Ribbon File Manager</property>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkBox" id="quick_access_box">
+                    <property name="visible">True</property>
+                    <property name="spacing">2</property>
+                    <property name="hexpand">True</property>
+                    <property name="halign">end</property>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child>
+              <object class="GtkBox" id="ribbon_bar">
+                <property name="visible">True</property>
+                <property name="orientation">vertical</property>
+                <child>
+                  <object class="GtkBox" id="ribbon_top_row">
+                    <property name="visible">True</property>
+                    <property name="spacing">4</property>
+                    <child>
+                      <object class="GtkStackSwitcher" id="ribbon_switcher">
+                        <property name="visible">True</property>
+                        <property name="halign">start</property>
+                        <property name="homogeneous">False</property>
+                        <property name="stack">ribbon_stack</property>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkStack" id="ribbon_stack">
+                    <property name="visible">True</property>
+                    <property name="transition-type">crossfade</property>
+                  </object>
+                </child>
+              </object>
+            </child>
+          </object>
+        </child>
+        <child>
+          <!-- ===== Navigation bar ===== -->
+          <object class="GtkBox" id="nav_bar">
+            <property name="visible">True</property>
+            <property name="spacing">4</property>
+            <property name="margin-start">6</property>
+            <property name="margin-end">6</property>
+            <property name="margin-top">2</property>
+            <property name="margin-bottom">2</property>
+            <child>
+              <object class="GtkButton" id="nav_back">
+                <property name="visible">True</property>
+                <property name="tooltip-text">Back</property>
+                <property name="sensitive">False</property>
+                <signal name="clicked" handler="on_nav_back"/>
+                <child>
+                  <object class="GtkImage">
+                    <property name="visible">True</property>
+                    <property name="icon-name">go-previous-symbolic</property>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child>
+              <object class="GtkButton" id="nav_forward">
+                <property name="visible">True</property>
+                <property name="tooltip-text">Forward</property>
+                <property name="sensitive">False</property>
+                <signal name="clicked" handler="on_nav_forward"/>
+                <child>
+                  <object class="GtkImage">
+                    <property name="visible">True</property>
+                    <property name="icon-name">go-next-symbolic</property>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child>
+              <object class="GtkButton" id="nav_up">
+                <property name="visible">True</property>
+                <property name="tooltip-text">Up</property>
+                <signal name="clicked" handler="on_nav_up"/>
+                <child>
+                  <object class="GtkImage">
+                    <property name="visible">True</property>
+                    <property name="icon-name">go-up-symbolic</property>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child>
+              <object class="GtkButton" id="nav_refresh">
+                <property name="visible">True</property>
+                <property name="tooltip-text">Refresh</property>
+                <signal name="clicked" handler="on_nav_refresh"/>
+                <child>
+                  <object class="GtkImage">
+                    <property name="visible">True</property>
+                    <property name="icon-name">view-refresh-symbolic</property>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child>
+              <object class="GtkSeparator"> <property name="visible">True</property> </object>
+            </child>
+            <child>
+              <!-- Breadcrumb / address bar between nav buttons and search -->
+              <object class="GtkBox" id="crumb_bar">
+                <property name="visible">True</property>
+                <property name="spacing">0</property>
+                <property name="hexpand">True</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkEntry" id="address_entry">
+                <property name="visible">True</property>
+                <property name="hexpand">True</property>
+                <property name="no-show-all">True</property>
+                <property name="primary-icon-name">edit-clear-all-symbolic</property>
+                <signal name="activate" handler="on_address_activate"/>
+              </object>
+            </child>
+            <child>
+              <object class="GtkButton" id="toggle_crumb_edit">
+                <property name="visible">True</property>
+                <property name="tooltip-text">Edit location</property>
+                <signal name="clicked" handler="on_toggle_crumb_edit"/>
+                <child>
+                  <object class="GtkImage">
+                    <property name="visible">True</property>
+                    <property name="icon-name">edit-address</property>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child>
+              <object class="GtkSearchEntry" id="search_entry">
+                <property name="visible">True</property>
+                <property name="width-chars">22</property>
+                <property name="tooltip-text">Search current folder</property>
+              </object>
+            </child>
+          </object>
+        </child>
+        <child>
+          <!-- ===== Main content area ===== -->
+          <object class="GtkPaned" id="main_paned">
+            <property name="visible">True</property>
+            <property name="hexpand">True</property>
+            <property name="vexpand">True</property>
+            <property name="position">200</property>
+            <child>
+              <object class="GtkBox" id="sidebar_container">
+                <property name="visible">True</property>
+                <property name="orientation">vertical</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkBox" id="content_container">
+                <property name="visible">True</property>
+                <property name="orientation">vertical</property>
+                <property name="hexpand">True</property>
+                <property name="vexpand">True</property>
+                <child>
+                  <object class="GtkStack" id="view_stack">
+                    <property name="visible">True</property>
+                    <property name="hexpand">True</property>
+                    <property name="vexpand">True</property>
+                    <child>
+                      <object class="GtkScrolledWindow" id="scroll_tree">
+                        <property name="visible">True</property>
+                        <property name="hexpand">True</property>
+                        <property name="vexpand">True</property>
+                        <property name="shadow-type">in</property>
+                        <child>
+                          <object class="GtkTreeView" id="file_view">
+                            <property name="visible">True</property>
+                            <property name="hexpand">True</property>
+                            <property name="vexpand">True</property>
+                            <property name="enable-grid-lines">none</property>
+                            <property name="rules-hint">True</property>
+                            <property name="enable-search">True</property>
+                            <property name="reorderable">False</property>
+                            <property name="show-expanders">True</property>
+                          </object>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="name">tree</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkScrolledWindow" id="scroll_icons">
+                        <property name="visible">True</property>
+                        <property name="hexpand">True</property>
+                        <property name="vexpand">True</property>
+                        <property name="shadow-type">in</property>
+                        <child>
+                          <object class="GtkIconView" id="icon_view">
+                            <property name="visible">True</property>
+                            <property name="hexpand">True</property>
+                            <property name="vexpand">True</property>
+                            <property name="selection-mode">multiple</property>
+                            <property name="item-padding">4</property>
+                            <property name="margin">6</property>
+                          </object>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="name">icons</property>
+                      </packing>
+                    </child>
+                  </object>
+                </child>
+              </object>
+            </child>
+          </object>
+        </child>
+        <child>
+          <!-- ===== Status bar ===== -->
+          <object class="GtkStatusbar" id="status_bar">
+            <property name="visible">True</property>
+            <property name="margin-top">2</property>
+          </object>
+        </child>
+      </object>
+    </child>
+  </object>
+</interface>

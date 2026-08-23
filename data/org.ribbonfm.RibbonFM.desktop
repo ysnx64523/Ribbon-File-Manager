@@ -1,0 +1,13 @@
+[Desktop Entry]
+Name=Ribbon File Manager
+Name[zh_CN]=Ribbon 文件管理器
+Comment=Cross-platform Ribbon-style file manager
+Comment[zh_CN]=跨平台 Ribbon 风格文件管理器
+Exec=ribbonfm %F
+Terminal=false
+Type=Application
+Icon=org.ribbonfm.RibbonFM
+Categories=System;FileTools;Utility;Core;
+MimeType=inode/directory;
+Keywords=file;manager;explorer;folder;ribbon;
+StartupNotify=true

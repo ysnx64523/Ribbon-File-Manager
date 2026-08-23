@@ -1,0 +1,153 @@
+/* Ribbon File Manager - application stylesheet.
+   Approximates a Windows-Explorer style Ribbon with GTK CSS. */
+
+/* --- Header / title bar (thin green ribbon like "Drive Tools") ------------ */
+#header_box {
+  background: linear-gradient(to bottom, #2f5f8f, #24507c);
+}
+#title_row {
+  padding: 3px 8px 1px 8px;
+  background: transparent;
+}
+#app_title_label {
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 1.05em;
+}
+#app_icon {
+  margin-right: 4px;
+}
+
+/* Ribbon tab strip */
+#ribbon_bar {
+  background: #1f4a73;
+}
+#ribbon_top_row {
+  padding: 0 6px;
+}
+#ribbon_switcher {
+  background: transparent;
+}
+#ribbon_switcher button {
+  color: #dfe9f5;
+  border-image: none;
+  border-radius: 3px 3px 0 0;
+  margin: 2px 2px 0 2px;
+  padding: 5px 16px;
+  font-weight: 600;
+}
+#ribbon_switcher button:checked {
+  background-color: #f2f6fb;
+  color: #1f4a73;
+  border: 1px solid #c8d6e8;
+  border-bottom: none;
+}
+#ribbon_switcher button:hover:not(:checked) {
+  background-color: alpha(#ffffff, 0.12);
+}
+
+/* Ribbon body */
+.ribbon-page {
+  background: linear-gradient(to bottom, #f2f6fb, #e3ebf5);
+  border-bottom: 1px solid #c8d6e8;
+}
+.ribbon-group {
+  padding: 4px 8px;
+}
+.ribbon-group-caption {
+  font-size: 0.78em;
+  color: #4a6b8c;
+  font-weight: 600;
+  padding-top: 2px;
+}
+
+/* Large Ribbon buttons (icon over label) */
+.ribbon-large-button {
+  margin: 3px 3px 0 3px;
+  padding: 4px 6px;
+  border-radius: 4px;
+  background: transparent;
+}
+.ribbon-large-button:hover,
+.ribbon-small-button:hover,
+.ribbon-quick-button:hover,
+.ribbon-collapse-button:hover {
+  background-color: alpha(#7fa5e8, 0.35);
+}
+.ribbon-large-button:active,
+.ribbon-small-button:active,
+.ribbon-quick-button:active {
+  background-color: alpha(#5b8dee, 0.45);
+}
+.ribbon-large-button.checked,
+.ribbon-small-button.checked {
+  background-color: alpha(#5b8dee, 0.55);
+}
+
+.ribbon-small-button,
+.ribbon-quick-button,
+.ribbon-collapse-button {
+  margin: 2px;
+  padding: 3px 7px;
+  border-radius: 4px;
+  background: transparent;
+}
+
+/* --- Navigation bar ------------------------------------------------------ */
+#nav_bar {
+  background-color: #eef2f8;
+  border-bottom: 1px solid #cfdbea;
+}
+#nav_bar button {
+  background: transparent;
+}
+
+/* Breadcrumb / editable address look like a text field */
+#crumb_bar {
+  background: #ffffff;
+  border: 1px solid #cfdbea;
+  border-radius: 3px;
+  padding: 0 4px;
+  min-height: 30px;
+}
+#crumb_bar button {
+  padding: 2px 6px;
+  border-radius: 3px;
+  color: #1f4a73;
+}
+#crumb_bar button:hover {
+  background-color: #e3ebf5;
+}
+#address_entry {
+  background: #ffffff;
+}
+
+/* --- Sidebar ------------------------------------------------------------- */
+#sidebar_container {
+  background-color: #f7f9fc;
+  border-right: 1px solid #d3dde9;
+}
+#sidebar_container treeview {
+  border: none;
+  background-color: transparent;
+}
+
+/* --- Status bar ---------------------------------------------------------- */
+#status_bar {
+  font-size: 0.92em;
+  border-top: 1px solid #d3dde9;
+  background-color: #eef2f8;
+}
+
+/* --- Properties dialog --------------------------------------------------- */
+.security-note {
+  color: @warning_color;
+}
+.prop-key {
+  font-weight: 700;
+  color: alpha(@theme_fg_color, 0.85);
+}
+
+#icon_view {
+  background-color: @theme_base_color;
+}

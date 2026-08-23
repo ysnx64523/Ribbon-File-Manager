@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>org.ribbonfm.RibbonFM</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <name>Ribbon File Manager</name>
+  <name xml:lang="zh_CN">Ribbon 文件管理器</name>
+  <summary>A cross-platform Ribbon-style file manager</summary>
+  <summary xml:lang="zh_CN">跨平台 Ribbon 风格文件管理器</summary>
+  <description>
+    <p>
+      RibbonFM is a file manager with a Windows-Explorer-like Ribbon toolbar.
+      It is written in Python with GTK3 (PyGObject) and runs on Linux, Windows
+      and macOS. It supports navigation, file operations, privilege escalation,
+      multiple views and localisation.
+    </p>
+  </description>
+  <categories>
+    <category>Utility</category>
+    <category>FileTools</category>
+  </categories>
+  <keywords>
+    <keyword>file</keyword>
+    <keyword>manager</keyword>
+    <keyword>explorer</keyword>
+    <keyword>folder</keyword>
+  </keywords>
+  <project_license>Apache-2.0</project_license>
+  <launchable type="desktop-id">org.ribbonfm.RibbonFM.desktop</launchable>
+  <provides>
+    <binary>ribbonfm</binary>
+  </provides>
+  <content_rating type="oars-1.1"/>
+  <releases>
+    <release version="0.1.0" date="2026-01-01"/>
+  </releases>
+</component>

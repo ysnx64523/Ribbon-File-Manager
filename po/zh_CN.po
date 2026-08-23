@@ -1,0 +1,549 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: ribbonfm 0.1.0\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: zh_CN\n"
+
+
+msgid "Project-Id-Version: PACKAGE VERSION\\nReport-Msgid-Bugs-To: \\nPOT-Creation-Date: 2026-08-23 20:45+0800\\nPO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\\nLast-Translator: FULL NAME <EMAIL@ADDRESS>\\nLanguage-Team: LANGUAGE <LL@li.org>\\nLanguage: \\nMIME-Version: 1.0\\nContent-Type: text/plain; charset=CHARSET\\nContent-Transfer-Encoding: 8bit\\n"
+msgstr ""
+
+msgid "pkexec is not available to elevate privileges."
+msgstr ""
+
+msgid "The privileged operation timed out."
+msgstr ""
+
+msgid "Failed to start the privileged helper: {err}"
+msgstr ""
+
+msgid "You cancelled the authentication request."
+msgstr ""
+
+msgid "The privileged operation was rejected: {msg}"
+msgstr ""
+
+msgid "runas escalation is not wired up in this build."
+msgstr ""
+
+msgid "osascript escalation is not wired up in this build."
+msgstr ""
+
+msgid "Privilege escalation is not supported on this platform."
+msgstr ""
+
+msgid "Could not change permissions: {err}"
+msgstr ""
+
+msgid "ribbon_collapse"
+msgstr "折叠功能区"
+
+msgid "Location: {loc}"
+msgstr "位置：{loc}"
+
+msgid "{n} items"
+msgstr "{n} 个项目"
+
+msgid "{n} selected"
+msgstr "已选择 {n} 项"
+
+msgid "Free space: {size}"
+msgstr "可用空间：{size}"
+
+msgid "User: {user}"
+msgstr "用户：{user}"
+
+msgid "administrator"
+msgstr "管理员"
+
+msgid "Read only"
+msgstr "只读"
+
+msgid "Places"
+msgstr "位置"
+
+msgid "Bookmarks"
+msgstr "书签"
+
+msgid "Devices"
+msgstr "设备"
+
+msgid "Network"
+msgstr "网络"
+
+msgid "Network locations"
+msgstr "网络位置"
+
+msgid "File system"
+msgstr "文件系统"
+
+msgid "Open"
+msgstr "打开"
+
+msgid "Add to bookmarks"
+msgstr "添加到书签"
+
+msgid "Remove bookmark"
+msgstr "移除书签"
+
+msgid "Name"
+msgstr "名称"
+
+msgid "Type"
+msgstr "类型"
+
+msgid "Permissions"
+msgstr "权限"
+
+msgid "Owner"
+msgstr "所有者"
+
+msgid "Group"
+msgstr "组"
+
+msgid "Size"
+msgstr "大小"
+
+msgid "Modified"
+msgstr "修改时间"
+
+msgid "Open With..."
+msgstr "打开方式..."
+
+msgid "Cut"
+msgstr "剪切"
+
+msgid "Copy"
+msgstr "复制"
+
+msgid "Rename..."
+msgstr "重命名..."
+
+msgid "Move to Trash"
+msgstr "移到回收站"
+
+msgid "Delete Permanently"
+msgstr "永久删除"
+
+msgid "Properties"
+msgstr "属性"
+
+msgid "New Folder"
+msgstr "新建文件夹"
+
+msgid "New File"
+msgstr "新建文件"
+
+msgid "Paste"
+msgstr ""
+
+msgid "Select All"
+msgstr "全选"
+
+msgid "Refresh"
+msgstr ""
+
+msgid "Location"
+msgstr "位置"
+
+msgid "Octal mode"
+msgstr ""
+
+msgid "This location is writable by all users or is managed with elevated privileges."
+msgstr "此位置对所有用户可写，或由提权管理。"
+
+msgid "Change permissions"
+msgstr "修改权限"
+
+msgid "Octal mode, e.g. 755"
+msgstr "八进制模式，如 755"
+
+msgid "Invalid octal mode"
+msgstr "无效的八进制模式"
+
+msgid "Use a value such as 755."
+msgstr "请使用类似 755 的值。"
+
+msgid "Permissions updated."
+msgstr "权限已更新。"
+
+msgid "Apply"
+msgstr ""
+
+msgid "Symbolic link to {target}"
+msgstr "指向 {target} 的符号链接"
+
+msgid "Folder"
+msgstr "文件夹"
+
+msgid "Drive"
+msgstr "驱动器"
+
+msgid "Symbolic link"
+msgstr "符号链接"
+
+msgid "File"
+msgstr "文件"
+
+msgid "(folder)"
+msgstr ""
+
+msgid "Cannot open folder"
+msgstr "无法打开文件夹"
+
+msgid "This location is not a readable directory: {path}"
+msgstr ""
+
+msgid "The folder could not be read. {err}"
+msgstr ""
+
+msgid "Not implemented yet"
+msgstr "尚未实现"
+
+msgid "The '{action}' action is a placeholder."
+msgstr ""
+
+msgid "Some items were not pasted"
+msgstr "部分项目未粘贴"
+
+msgid "Pasted {n} item(s)"
+msgstr ""
+
+msgid "Move {n} item(s) to Trash?"
+msgstr "将 {n} 个项目移到回收站？"
+
+msgid "Some items could not be moved to Trash"
+msgstr "部分项目无法移到回收站"
+
+msgid "Permanently delete {n} item(s)?"
+msgstr "永久删除 {n} 个项目？"
+
+msgid "This cannot be undone."
+msgstr "此操作无法撤销。"
+
+msgid "Some items could not be deleted"
+msgstr "部分项目无法删除"
+
+msgid "Rename"
+msgstr "重命名"
+
+msgid "New name:"
+msgstr "新名称："
+
+msgid "Rename failed"
+msgstr "重命名失败"
+
+msgid "Folder name:"
+msgstr "文件夹名称："
+
+msgid "Could not create folder"
+msgstr "无法创建文件夹"
+
+msgid "File name:"
+msgstr "文件名："
+
+msgid "New File.txt"
+msgstr ""
+
+msgid "Could not create file"
+msgstr "无法创建文件"
+
+msgid "Could not open this file"
+msgstr "无法打开此文件"
+
+msgid "No application found"
+msgstr "未找到应用程序"
+
+msgid "There is no registered application for this type."
+msgstr "此类型没有注册的应用程序。"
+
+msgid "Could not open terminal"
+msgstr "无法打开终端"
+
+msgid "Language changed"
+msgstr "语言已更改"
+
+msgid "Please restart the application for the change to take effect."
+msgstr "请重启应用程序以使更改生效。"
+
+msgid "ribbon_tab_file"
+msgstr "文件"
+
+msgid "ribbon_tab_home"
+msgstr "主页"
+
+msgid "ribbon_tab_share"
+msgstr "共享"
+
+msgid "ribbon_tab_view"
+msgstr "查看"
+
+msgid "ribbon_tab_manage"
+msgstr "管理"
+
+msgid "group_new"
+msgstr "新建"
+
+msgid "group_manage"
+msgstr "管理"
+
+msgid "group_open"
+msgstr "打开"
+
+msgid "group_clipboard"
+msgstr "剪贴板"
+
+msgid "group_organize"
+msgstr "组织"
+
+msgid "group_actions"
+msgstr "操作"
+
+msgid "group_view"
+msgstr "视图"
+
+msgid "group_sort"
+msgstr "排序"
+
+msgid "group_filter"
+msgstr "筛选器"
+
+msgid "group_system"
+msgstr "系统"
+
+msgid "group_share"
+msgstr "共享"
+
+msgid "group_select"
+msgstr "选择"
+
+msgid "group_panes"
+msgstr "窗格"
+
+msgid "group_layout"
+msgstr "布局"
+
+msgid "group_currentview"
+msgstr "当前视图"
+
+msgid "group_showhide"
+msgstr "显示/隐藏"
+
+msgid "group_options"
+msgstr "选项"
+
+msgid "nav_pane"
+msgstr "导航窗格"
+
+msgid "preview_pane"
+msgstr "预览窗格"
+
+msgid "details_pane"
+msgstr "详细信息窗格"
+
+msgid "view_huge"
+msgstr "超大图标"
+
+msgid "view_large"
+msgstr "大图标"
+
+msgid "view_medium"
+msgstr "中图标"
+
+msgid "view_small"
+msgstr "小图标"
+
+msgid "view_list"
+msgstr "列表"
+
+msgid "view_details"
+msgstr "详细信息"
+
+msgid "view_tiles"
+msgstr "平铺"
+
+msgid "view_content"
+msgstr "内容"
+
+msgid "sort_by"
+msgstr "排序方式"
+
+msgid "group_by"
+msgstr "分组依据"
+
+msgid "add_columns"
+msgstr "添加列"
+
+msgid "size_all_columns"
+msgstr "把所有列调整为合适的大小"
+
+msgid "item_checkboxes"
+msgstr "项目复选框"
+
+msgid "file_extensions"
+msgstr "文件扩展名"
+
+msgid "hidden_items"
+msgstr "隐藏的项目"
+
+msgid "hidden"
+msgstr "隐藏"
+
+msgid "selected_items"
+msgstr "所选项目"
+
+msgid "hide_selected"
+msgstr "隐藏所选项目"
+
+msgid "pin_to_quick_access"
+msgstr "固定到快速访问"
+
+msgid "move_to"
+msgstr "移动到"
+
+msgid "copy_to"
+msgstr "复制到"
+
+msgid "new_item"
+msgstr "新建"
+
+msgid "open"
+msgstr "打开"
+
+msgid "edit"
+msgstr "编辑"
+
+msgid "history"
+msgstr "历史记录"
+
+msgid "select_none"
+msgstr "全部取消"
+
+msgid "filter"
+msgstr "筛选器"
+
+msgid "new_folder"
+msgstr "新建文件夹"
+
+msgid "new_file"
+msgstr "新建文件"
+
+msgid "close"
+msgstr "退出"
+
+msgid "cut"
+msgstr "剪切"
+
+msgid "copy"
+msgstr "复制"
+
+msgid "paste"
+msgstr "粘贴"
+
+msgid "delete"
+msgstr "删除"
+
+msgid "rename"
+msgstr "重命名"
+
+msgid "properties"
+msgstr "属性"
+
+msgid "select_all"
+msgstr "全选"
+
+msgid "invert_select"
+msgstr "反向选择"
+
+msgid "refresh"
+msgstr "刷新"
+
+msgid "view_large_icons"
+msgstr "大图标"
+
+msgid "view_small_icons"
+msgstr "小图标"
+
+msgid "sort_by_name"
+msgstr "按名称"
+
+msgid "sort_by_size"
+msgstr "按大小"
+
+msgid "sort_by_type"
+msgstr "按类型"
+
+msgid "sort_by_mtime"
+msgstr "按修改时间"
+
+msgid "show_hidden"
+msgstr "显示隐藏文件"
+
+msgid "group_by_type"
+msgstr "按类型分组"
+
+msgid "open_terminal"
+msgstr "打开终端"
+
+msgid "open_terminal_admin"
+msgstr "以管理员身份打开终端"
+
+msgid "options"
+msgstr "选项"
+
+msgid "help"
+msgstr "帮助"
+
+msgid "Administrator terminal"
+msgstr "管理员终端"
+
+msgid "Options"
+msgstr "选项"
+
+msgid "Options are not yet available."
+msgstr "选项功能暂不可用。"
+
+msgid "A cross-platform Ribbon-style file manager."
+msgstr "一款跨平台的 Ribbon 风格文件管理器。"
+
+msgid "mount"
+msgstr "挂载"
+
+msgid "unmount"
+msgstr "卸载"
+
+msgid "share"
+msgstr "共享"
+
+msgid "compress"
+msgstr "压缩"
+
+msgid "Not mounted"
+msgstr "未挂载"
+
+msgid "Could not mount device"
+msgstr "无法挂载设备"
+
+msgid "Home"
+msgstr "主目录"
+
+msgid "Desktop"
+msgstr "桌面"
+
+msgid "Documents"
+msgstr "文档"
+
+msgid "Downloads"
+msgstr "下载"
+
+msgid "Pictures"
+msgstr "图片"
+
+msgid "Music"
+msgstr "音乐"
+
+msgid "Videos"
+msgstr "视频"
+

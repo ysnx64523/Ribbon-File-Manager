@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="48" height="48">
+  <!-- Ribbon FM application icon -->
+  <rect x="2" y="2" width="44" height="44" rx="8" fill="#35507a"/>
+  <rect x="7" y="9" width="34" height="8" rx="2" fill="#4f7ac7"/>
+  <rect x="7" y="10" width="34" height="6" rx="2" fill="#5b8dee"/>
+  <rect x="7" y="21" width="34" height="2" rx="1" fill="#7fa5e8"/>
+  <g fill="#e8eefc">
+    <rect x="9"  y="27" width="6" height="6" rx="1"/>
+    <rect x="17" y="27" width="6" height="6" rx="1"/>
+    <rect x="25" y="27" width="6" height="6" rx="1"/>
+    <rect x="33" y="27" width="6" height="6" rx="1"/>
+  </g>
+  <rect x="9" y="36" width="30" height="3" rx="1" fill="#bfd0f2"/>
+</svg>

@@ -1,0 +1,10 @@
+# Runtime dependencies
+# PyGObject / GTK3 are normally installed as system packages:
+#   Debian/Ubuntu : python3-gi gir1.2-gtk-3.0 libgtk-3-0
+#   Fedora        : python3-gobject gtk3
+#   Arch          : python-gobject gtk3
+# On systems where PyGObject is available on PyPI it may be pip-installed:
+PyGObject>=3.40
+
+# Development / tests
+pytest>=7.0
