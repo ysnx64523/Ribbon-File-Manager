@@ -58,5 +58,6 @@ EOF
 cp "$ROOT/data/$PKG_ID.svg" "$BUILD/$PKG_ID.svg"
 
 echo "== appimagetool =="
+export ARCH="${ARCH:-$(uname -m)}"
 "$APPIMAGE_TOOL" "$BUILD" "$STAGE/RibbonFileManager-$VERSION-x86_64.AppImage"
 echo "Built: $STAGE/RibbonFileManager-$VERSION-x86_64.AppImage"
