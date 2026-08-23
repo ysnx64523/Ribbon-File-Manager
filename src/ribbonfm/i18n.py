@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import gettext
 import locale
+import os
 from pathlib import Path
 from typing import Callable, Optional
 

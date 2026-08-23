@@ -1,0 +1,13 @@
+[flake8]
+# Matches the project's formatting style (see pyproject.toml: black line-length 120).
+max-line-length = 120
+max-complexity = 22
+# Ignore style/unused-noise codes that are not enforced here. Real bugs
+# (e.g. F821 undefined names) are still reported.
+extend-ignore =
+    E131,E302,E306,E501,E731,F401,F841,W391
+exclude =
+    .venv,
+    build,
+    dist,
+    *.egg-info
