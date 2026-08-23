@@ -240,11 +240,18 @@ def _concat_msgid(msgid: str, line: str) -> str:
     return msgid.rstrip("\n") + line.rstrip("\n")
 
 
+def _project_version() -> str:
+    """Read the version from pyproject.toml so the .po header stays in sync."""
+    import re
+    m = re.search(r'^version = "([^"]+)"', (ROOT / "pyproject.toml").read_text("utf-8"), re.M)
+    return m.group(1) if m else "0.1.0"
+
+
 def generate(lang: str, translations: dict[str, str]) -> str:
     entries: list[str] = []
     entries.append('msgid ""')
     entries.append('msgstr ""')
-    entries.append('"Project-Id-Version: ribbonfm 0.1.0\\n"')
+    entries.append('"Project-Id-Version: ribbonfm %s\\n"' % _project_version())
     entries.append('"MIME-Version: 1.0\\n"')
     entries.append('"Content-Type: text/plain; charset=UTF-8\\n"')
     entries.append('"Content-Transfer-Encoding: 8bit\\n"')
