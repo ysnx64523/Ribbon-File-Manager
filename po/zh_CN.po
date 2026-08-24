@@ -658,6 +658,27 @@ msgstr "回收站中的所有项目将被永久删除。"
 msgid "Trash emptied."
 msgstr "回收站已清空。"
 
+msgid "Language:"
+msgstr "语言："
+
+msgid "Theme:"
+msgstr "主题："
+
+msgid "System"
+msgstr "跟随系统"
+
+msgid "Light"
+msgstr "浅色"
+
+msgid "Dark"
+msgstr "深色"
+
+msgid "System default"
+msgstr "跟随系统"
+
+msgid "Language changes take effect after restarting the application."
+msgstr "语言更改需重启应用后生效。"
+
 msgid "Some items could not be dropped"
 msgstr "部分项目无法放入"
 

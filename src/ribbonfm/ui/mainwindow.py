@@ -371,11 +371,14 @@ class MainWindow(Gtk.ApplicationWindow, NavigationMixin, FileOpsMixin):
             "restore": self.restore,
             "empty_trash": self.empty_trash,
             "trash_delete_permanent": self.trash_delete_permanent,
-            "options": lambda: show_info(self, i18n._("Options"),
-                                         i18n._("Options are not yet available.")),
+            "options": self._options,
             "help": self._help,
             "close": self.close,
         }
+
+    def _options(self) -> None:
+        from .settings import SettingsDialog
+        SettingsDialog(self, self.get_application()).run()
 
     def _toggle_nav_pane(self) -> None:
         self._sidebar_container.set_visible(not self._sidebar_container.get_visible())

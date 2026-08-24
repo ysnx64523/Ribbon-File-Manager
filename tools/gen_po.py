@@ -248,6 +248,15 @@ TRANSLATIONS: dict[str, dict[str, str]] = {
         "All items in the Trash will be permanently deleted.":
             "回收站中的所有项目将被永久删除。",
         "Trash emptied.": "回收站已清空。",
+        "Options": "选项",
+        "Language:": "语言：",
+        "Theme:": "主题：",
+        "System": "跟随系统",
+        "Light": "浅色",
+        "Dark": "深色",
+        "System default": "跟随系统",
+        "Language changes take effect after restarting the application.":
+            "语言更改需重启应用后生效。",
         "Pasted {n} item(s)": "已粘贴 {n} 个项目",
         "Some items could not be dropped": "部分项目无法放入",
         "Symbolic link to {t}": "指向 {t} 的符号链接",

@@ -17,14 +17,18 @@ from .ui.mainwindow import MainWindow  # noqa: E402
 
 
 class RibbonFMApp(Gtk.Application):
-    def __init__(self, start_path: str | None = None):
+    def __init__(self, start_path: str | None = None, language: str | None = None):
         super().__init__(application_id=config.APP_ID,
                          flags=Gio.ApplicationFlags.FLAGS_NONE)
+        from .core import settings as app_settings
         self._start_path = start_path
         self._window: "MainWindow | None" = None
         self._dark = False
+        self._theme_override = app_settings.get("theme", "system")
+        self._lang = language or app_settings.get("lang", "") or None
         self._light_provider = Gtk.CssProvider()
         self._dark_provider = Gtk.CssProvider()
+        i18n.init(self._lang)
         self._init_theme()
         self._add_system_icon_paths()
 
@@ -75,13 +79,19 @@ class RibbonFMApp(Gtk.Application):
         return True  # keep polling
 
     def _detect_dark(self) -> bool:
-        """Whether the system is using a dark theme.
+        """Whether the app should use a dark theme.
 
-        Only reads *system* signals (never a value we set ourselves), so the
-        result cannot become self-reinforcing or stuck. Uses ``gtk-theme-name``
-        and ``GTK_THEME`` everywhere; ``Gio.Settings`` only on Linux/macOS where
-        the GNOME schema exists (it can crash glib natively on Windows).
+        Respects a user ``theme`` override (system/light/dark); otherwise reads
+        *system* signals only (never a value we set ourselves), so the result
+        cannot become self-reinforcing or stuck. ``Gio.Settings`` is only used
+        on Linux/macOS where the GNOME schema exists (it can crash glib natively
+        on Windows).
         """
+        override = getattr(self, "_theme_override", "system")
+        if override == "light":
+            return False
+        if override == "dark":
+            return True
         settings = Gtk.Settings.get_default()
         try:
             theme = (settings.get_property("gtk-theme-name") or "").lower()
@@ -155,6 +165,16 @@ class RibbonFMApp(Gtk.Application):
             except Exception:
                 pass
 
+    def apply_theme_override(self, mode: str) -> None:
+        """Apply a theme mode selected in Settings (system/light/dark)."""
+        self._theme_override = mode if mode in ("system", "light", "dark") else "system"
+        self._system_prefers_dark()
+        self._apply_theme()
+
+    def set_language(self, lang: str) -> None:
+        """Activate a gettext language selected in Settings."""
+        i18n.set_language(lang)
+
     def do_activate(self, *_):
         window = self.props.active_window
         if not window:
@@ -185,7 +205,6 @@ def main(argv: list[str] | None = None) -> int:
                         help="force a UI language (e.g. zh-CN)")
     args = parser.parse_args(argv)
 
-    i18n.init(args.lang)
     start = args.path or str(Path.home())
-    app = RibbonFMApp(start)
+    app = RibbonFMApp(start, language=args.lang)
     return app.run(argv)
