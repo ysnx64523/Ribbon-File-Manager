@@ -99,11 +99,12 @@ def _install_system() -> str:
     """Bind the whole process to the system locale (default behaviour)."""
     try:
         locale.setlocale(locale.LC_ALL, "")
-        lang = locale.normalize(locale.getlocale()[0])
+        raw = locale.getlocale()[0] or locale.getpreferredencoding(False) or ""
+        lang = locale.normalize(raw) if raw else ""
         if "." in lang:
             lang = lang.split(".")[0]
         lang = lang.replace("-", "_")
-    except locale.Error:
+    except (locale.Error, TypeError, ValueError):
         lang = os_lang()
     gettext.bindtextdomain(config.APP_GETTEXT_DOMAIN)
     gettext.textdomain(config.APP_GETTEXT_DOMAIN)
@@ -131,15 +132,30 @@ def _windows_lang() -> Optional[str]:
     """Return a gettext language code from the Windows UI language, or ``None``."""
     if not sys.platform.startswith("win"):
         return None
+    lcids = ()
     try:
         import ctypes
-        langid = ctypes.windll.kernel32.GetUserDefaultUILanguage()
-        mapped = locale.windows_locale.get(int(langid))
-        if mapped:
-            return mapped.replace("-", "_")
+        k32 = ctypes.windll.kernel32
+        # User display language, then system default UI language.
+        for fn in (k32.GetUserDefaultUILanguage, k32.GetSystemDefaultUILanguage):
+            try:
+                langid = fn()
+                lcids += (int(langid),)
+            except Exception:
+                continue
     except Exception:
         return None
+    for langid in lcids:
+        for lcid in (langid, langid & 0x03FF):  # primary-language sub-id
+            mapped = locale.windows_locale.get(lcid)
+            if mapped:
+                return mapped.replace("-", "_")
     return None
+
+
+def _first_available() -> Optional[str]:
+    """Return any bundled language (e.g. ``zh_CN``) or ``None``."""
+    return next(iter(_available), None)
 
 
 def init(language: Optional[str] = None) -> Callable[[str], str]:
@@ -147,25 +163,34 @@ def init(language: Optional[str] = None) -> Callable[[str], str]:
 
     Args:
         language: explicit language code, or ``None`` to use the system locale.
+
+    Resolves the language in this order: explicit ``language``, the detected
+    system language, then a fallback to any bundled catalog. If no catalog is
+    bundled at all it falls back to :func:`gettext.gettext` (English msgids).
     """
     global _, _current
     _discover()
     if language:
         for candidate in _candidates(language):
             if candidate in _available:
-                _current = candidate
-                _ = _make_translator(candidate)
-                return _
+                return _activate(candidate)
     _current = None
     lang = _install_system()
-    # Prefer a bundled translation matching the system language; otherwise fall
-    # back to the system-wide gettext domain.
     for candidate in _candidates(lang):
         if candidate in _available:
-            _ = _make_translator(candidate)
-            _current = candidate
-            return _
+            return _activate(candidate)
+    # Never show raw keys when a catalog exists: use the first available one.
+    first = _first_available()
+    if first is not None:
+        return _activate(first)
     _ = gettext.gettext
+    return _
+
+
+def _activate(lang: str) -> Callable[[str], str]:
+    global _, _current
+    _current = lang
+    _ = _make_translator(lang)
     return _
 
 

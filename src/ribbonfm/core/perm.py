@@ -9,7 +9,7 @@ Design goals
   Authorization Services / ``osascript`` on macOS.
 * The ``777`` permission case is not rejected outright (the user may legitimately
   want it) but produces a security warning.
-* Every user-visible string is wrapped in ``_()`` so it can be translated.
+* Every user-visible string is wrapped in ``i18n._()`` so it can be translated.
 
 Security
 --------
@@ -32,7 +32,7 @@ import sys
 from dataclasses import dataclass
 from typing import Optional
 
-from ..i18n import _
+from .. import i18n
 
 from . import pathutils
 
@@ -279,26 +279,26 @@ def _escalate_tokens(tokens: list[str]) -> tuple[bool, str]:
     """Run ``tokens`` with privileges and return (ok, error or '')."""
     if IS_LINUX:
         if not _pkexec_ok():
-            return False, _("pkexec is not available to elevate privileges.")
+            return False, i18n._("pkexec is not available to elevate privileges.")
         full = ["pkexec"] + tokens
         try:
             result = subprocess.run(full, capture_output=True, text=True, timeout=120)
         except subprocess.TimeoutExpired:
-            return False, _("The privileged operation timed out.")
+            return False, i18n._("The privileged operation timed out.")
         except OSError as exc:
-            return False, _("Failed to start the privileged helper: {err}").format(err=exc)
+            return False, i18n._("Failed to start the privileged helper: {err}").format(err=exc)
         if result.returncode == 0:
             return True, ""
         if result.returncode in (126, 127):
-            return False, _("You cancelled the authentication request.")
-        return False, _("The privileged operation was rejected: {msg}").format(
+            return False, i18n._("You cancelled the authentication request.")
+        return False, i18n._("The privileged operation was rejected: {msg}").format(
             msg=result.stderr.strip() or result.stdout.strip() or "unknown error"
         )
     if IS_WINDOWS:
-        raise UnsupportedError(_("runas escalation is not wired up in this build."))
+        raise UnsupportedError(i18n._("runas escalation is not wired up in this build."))
     if IS_MACOS:
-        raise UnsupportedError(_("osascript escalation is not wired up in this build."))
-    raise UnsupportedError(_("Privilege escalation is not supported on this platform."))
+        raise UnsupportedError(i18n._("osascript escalation is not wired up in this build."))
+    raise UnsupportedError(i18n._("Privilege escalation is not supported on this platform."))
 
 
 def chmod(path: str, mode: int) -> tuple[bool, str]:
@@ -315,7 +315,7 @@ def chmod(path: str, mode: int) -> tuple[bool, str]:
         except PermissionError:
             pass
         except OSError as exc:
-            return False, _("Could not change permissions: {err}").format(err=exc)
+            return False, i18n._("Could not change permissions: {err}").format(err=exc)
     return _escalate_tokens(["/bin/chmod", f"{mode:o}", canonical])
 
 
