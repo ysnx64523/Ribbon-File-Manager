@@ -1,0 +1,108 @@
+/* Ribbon File Manager - dark theme.
+   Applied automatically when the system prefers a dark color scheme. */
+
+/* Header / title (dark ribbon blue) */
+#header_box {
+  background: linear-gradient(to bottom, #1b3a5c, #142f4b);
+}
+#app_title_label {
+  color: #eaf2fb;
+}
+
+/* Ribbon tab strip */
+#ribbon_bar {
+  background: #0f2740;
+}
+#ribbon_switcher button {
+  color: #cfe0f2;
+}
+#ribbon_switcher button:checked {
+  background-color: #1a3247;
+  color: #eaf2fb;
+  border: 1px solid #2c4a66;
+  border-bottom: none;
+}
+#ribbon_switcher button:hover:not(:checked) {
+  background-color: rgba(255, 255, 255, 0.08);
+}
+
+/* Ribbon body */
+.ribbon-page {
+  background: linear-gradient(to bottom, #1c2f42, #16283a);
+  border-bottom: 1px solid #2c4a66;
+}
+.ribbon-group-caption {
+  color: #8fb0d0;
+}
+.ribbon-large-button:hover,
+.ribbon-small-button:hover,
+.ribbon-quick-button:hover,
+.ribbon-collapse-button:hover {
+  background-color: rgba(127, 165, 232, 0.22);
+}
+.ribbon-large-button:active,
+.ribbon-small-button:active,
+.ribbon-quick-button:active {
+  background-color: rgba(91, 141, 238, 0.3);
+}
+.ribbon-large-button.checked,
+.ribbon-small-button.checked {
+  background-color: rgba(91, 141, 238, 0.4);
+}
+
+/* Navigation bar */
+#nav_bar {
+  background-color: #16283a;
+  border-bottom: 1px solid #2c4a66;
+}
+
+/* Breadcrumb / address field */
+#crumb_bar {
+  background: #1c2f42;
+  border: 1px solid #2c4a66;
+  color: #d7e5f3;
+}
+#crumb_bar button {
+  color: #cfe0f2;
+}
+#crumb_bar button:hover {
+  background-color: #26405c;
+}
+#address_entry {
+  background: #1c2f42;
+  color: #d7e5f3;
+}
+
+/* Sidebar */
+#sidebar_container {
+  background-color: #16283a;
+  border-right: 1px solid #2c4a66;
+}
+#sidebar_container treeview {
+  color: #d7e5f3;
+}
+
+/* Status bar */
+#status_bar {
+  border-top: 1px solid #26405c;
+  background-color: #16283a;
+  color: #cfe0f2;
+}
+
+/* View */
+#file_view,
+#icon_view {
+  background-color: #1c2f42;
+  color: #d7e5f3;
+}
+#icon_view {
+  background-color: #1c2f42;
+}
+
+/* Properties / dtails grid labels */
+.prop-key {
+  color: #8fb0d0;
+}
+.security-note {
+  color: #ffcc66;
+}

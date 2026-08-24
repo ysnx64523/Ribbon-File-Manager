@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import os
 from pathlib import Path
 
 import gi
@@ -20,8 +21,96 @@ class RibbonFMApp(Gtk.Application):
                          flags=Gio.ApplicationFlags.FLAGS_NONE)
         self._start_path = start_path
         self._window: "MainWindow | None" = None
-        self._apply_css()
+        self._dark = False
+        self._light_provider = Gtk.CssProvider()
+        self._dark_provider = Gtk.CssProvider()
+        self._init_theme()
         self._add_system_icon_paths()
+
+    def _init_theme(self) -> None:
+        """Load both CSS variants and follow the system light/dark scheme."""
+        base = config.resources_dir() / "css"
+        try:
+            self._light_provider.load_from_path(str(base / "style.css"))
+        except GLib.Error as exc:
+            print("Could not load light CSS:", exc)
+        try:
+            self._dark_provider.load_from_path(str(base / "style-dark.css"))
+        except GLib.Error as exc:
+            print("Could not load dark CSS:", exc)
+
+        self._system_prefers_dark()
+        settings = Gtk.Settings.get_default()
+        try:
+            settings.connect("notify::gtk-application-prefer-dark-theme",
+                             self._on_dark_setting_changed)
+        except Exception:
+            pass
+        # Follow OS theme changes live (gtk-theme / color-scheme).
+        try:
+            gs = Gio.Settings.new("org.gnome.desktop.interface")
+            gs.connect("changed::gtk-theme", lambda *_a: self._on_theme_changed())
+            gs.connect("changed::color-scheme", lambda *_a: self._on_theme_changed())
+        except Exception:
+            pass
+        self._apply_theme()
+
+    def _detect_dark(self) -> bool:
+        """Whether the system is using a dark theme (best effort)."""
+        settings = Gtk.Settings.get_default()
+        try:
+            theme = (settings.get_property("gtk-theme-name") or "").lower()
+            if theme.endswith("-dark"):
+                return True
+        except Exception:
+            pass
+        try:
+            gs = Gio.Settings.new("org.gnome.desktop.interface")
+            scheme = (gs.get_string("color-scheme") or "").lower()
+            if "dark" in scheme:
+                return True
+            if (gs.get_string("gtk-theme") or "").lower().endswith("-dark"):
+                return True
+        except Exception:
+            pass
+        try:
+            if bool(settings.get_property("gtk-application-prefer-dark-theme")):
+                return True
+        except Exception:
+            pass
+        return "dark" in os.environ.get("GTK_THEME", "").lower()
+
+    def _system_prefers_dark(self) -> None:
+        """Detect the system color scheme and reflect it in GTK settings."""
+        dark = self._detect_dark()
+        try:
+            Gtk.Settings.get_default().set_property(
+                "gtk-application-prefer-dark-theme", dark)
+        except Exception:
+            pass
+        self._dark = dark
+
+    def _on_theme_changed(self) -> None:
+        self._system_prefers_dark()
+        self._apply_theme()
+
+    def _on_dark_setting_changed(self, _settings, _pspec) -> None:
+        settings = Gtk.Settings.get_default()
+        try:
+            self._dark = bool(settings.get_property("gtk-application-prefer-dark-theme"))
+        except Exception:
+            self._dark = self._dark
+        self._apply_theme()
+
+    def _apply_theme(self) -> None:
+        screen = Gdk.Screen.get_default()
+        if screen is None:
+            return
+        for provider in (self._light_provider, self._dark_provider):
+            Gtk.StyleContext.remove_provider_for_screen(screen, provider)
+        provider = self._dark_provider if self._dark else self._light_provider
+        Gtk.StyleContext.add_provider_for_screen(
+            screen, provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
 
     def _add_system_icon_paths(self) -> None:
         """Follow the host's icon theme (needed when running from a bundle).
@@ -44,19 +133,6 @@ class RibbonFMApp(Gtk.Application):
                     theme.append_search_path(d)
             except Exception:
                 pass
-
-    def _apply_css(self) -> None:
-        provider = Gtk.CssProvider()
-        css_file = config.resources_dir() / "css" / "style.css"
-        try:
-            provider.load_from_path(str(css_file))
-            screen = Gdk.Screen.get_default()
-            if screen is None:
-                return
-            Gtk.StyleContext.add_provider_for_screen(
-                screen, provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
-        except GLib.Error as exc:
-            print("Could not load CSS:", exc)
 
     def do_activate(self, *_):
         window = self.props.active_window
