@@ -55,6 +55,9 @@ coverage.xml
 cover/
 
 # Translations
+# NOTE: po/*.pot, po/*.po and resources/locale/**/*.mo are intentionally
+# TRACKED (not ignored) so the app ships translations without a build-time
+# gen_po step. Do not add *.mo / *.pot / *.po back here.
 
 
 # Django stuff:
