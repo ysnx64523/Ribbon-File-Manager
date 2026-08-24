@@ -100,7 +100,7 @@ user action → handle_action(action)
 | `src/ribbonfm/core/settings.py` | 44 | settings_path, load, get, save |
 | `src/ribbonfm/core/sorts.py` | 21 | make_key |
 | `src/ribbonfm/core/tasks.py` | 86 | call_async, _log_error, call_async_chain |
-| `src/ribbonfm/i18n.py` | 217 | _locale_dir, _discover, available_languages, current_language, _make_translator, _candidates, _install_system, os_lang, _windows_lang, _first_available, init, _activate, set_language |
+| `src/ribbonfm/i18n.py` | 220 | _locale_dir, _discover, available_languages, current_language, _make_translator, _candidates, _install_system, os_lang, _windows_lang, _first_available, init, _activate, set_language |
 | `src/ribbonfm/ui/__init__.py` | 7 | — |
 | `src/ribbonfm/ui/addressbar.py` | 95 | AddressBar |
 | `src/ribbonfm/ui/dialogs.py` | 90 | show_error, show_info, confirm, ask_text |

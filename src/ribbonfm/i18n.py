@@ -86,12 +86,15 @@ def _candidates(lang: str) -> list[str]:
 
     Handles both ``zh-CN`` (BCP-47) and ``zh_CN`` (glibc/gettext) styles so a
     translation shipped as ``locale/zh_CN/`` is found for a ``zh-CN`` locale.
+    Any English variant also resolves to ``en_US`` (the unified English catalog).
     """
     result = []
     for code in (lang, lang.replace("-", "_"), lang.split("-")[0],
                  lang.split("_")[0]):
         if code and code not in result:
             result.append(code)
+    if lang.split("-")[0].split("_")[0] == "en" and "en_US" not in result:
+        result.append("en_US")
     return result
 
 
@@ -154,8 +157,8 @@ def _windows_lang() -> Optional[str]:
 
 
 def _first_available() -> Optional[str]:
-    """Return a bundled language to fall back to; prefer English, else any."""
-    for pref in ("en", "en_US", "en_GB"):
+    """Return a bundled language to fall back to; prefer en_US, else any."""
+    for pref in ("en_US", "en_GB", "en"):
         if pref in _available:
             return pref
     return next(iter(_available), None)

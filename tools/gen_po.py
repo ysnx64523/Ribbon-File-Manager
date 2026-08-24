@@ -281,7 +281,7 @@ TRANSLATIONS: dict[str, dict[str, str]] = {
     },
     # English: dynamic label keys must be mapped to readable English (gettext
     # returns the msgid as-is for everything else, which is already English).
-    "en": {
+    "en_US": {
         "ribbon_tab_home": "Home",
         "ribbon_tab_file": "File",
         "ribbon_tab_share": "Share",
