@@ -12,6 +12,10 @@ designed to be portable to macOS and Windows.
 > Also runs on Python 3.8+ (`pyproject.toml`) wherever a matching PyGObject is
 > available for the interpreter.
 
+## Screenshot
+
+![Ribbon FM - main window](docs/screenshot.png)
+
 ---
 
 ## Features
