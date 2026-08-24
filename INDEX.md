@@ -111,7 +111,7 @@ user action → handle_action(action)
 | `src/ribbonfm/ui/propsdialog.py` | 291 | PropertiesDialog, _size_human |
 | `src/ribbonfm/ui/ribbon.py` | 313 | _large_button, _small_button, _on_click, _group_widget, Ribbon |
 | `src/ribbonfm/ui/ribbon_spec.py` | 143 | _btn, _group |
-| `src/ribbonfm/ui/sidepanel.py` | 247 | Sidebar, _human_label |
+| `src/ribbonfm/ui/sidepanel.py` | 250 | Sidebar, _human_label |
 | `src/ribbonfm/ui/statusbar.py` | 73 | StatusBar, _n, format_size |
 | `tools/gen_index.py` | 155 | _symbols, _class_methods, _scan, _entry_points, _render, build, update, main |
 | `tools/gen_po.py` | 375 | _concat_msgid, _project_version, generate, _parse_quoted, _escape, compile_mo, _ensure_pot, main |

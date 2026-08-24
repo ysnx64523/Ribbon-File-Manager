@@ -178,22 +178,25 @@ class Sidebar:
             self._on_navigate(path)
 
     def _on_button_press(self, view, event):
+        hit = view.get_path_at_pos(int(event.x), int(event.y))
+        if hit is None:
+            return False
+        path, col, x, y = hit
         if event.button == Gdk.BUTTON_PRIMARY:
-            path, col, x, y = view.get_path_at_pos(int(event.x), int(event.y))
-            if path:
-                it = self._model.get_iter(path)
-                if self._model.get_value(it, _KIND_COL) == _ITEM:
-                    self._activate_token(self._model.get_value(it, _PATH_COL))
-                    return True
+            it = self._model.get_iter(path)
+            if self._model.get_value(it, _KIND_COL) == _ITEM:
+                self._activate_token(self._model.get_value(it, _PATH_COL))
+                return True
         elif event.button == Gdk.BUTTON_SECONDARY:
             if self._show_context_menu(view, event):
                 return True
         return False
 
     def _show_context_menu(self, view, event) -> bool:
-        path, _, _, _ = view.get_path_at_pos(int(event.x), int(event.y))
-        if not path:
+        hit = view.get_path_at_pos(int(event.x), int(event.y))
+        if hit is None:
             return False
+        path, _, _, _ = hit
         it = self._model.get_iter(path)
         if self._model.get_value(it, _KIND_COL) != _ITEM:
             return False
