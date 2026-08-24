@@ -92,6 +92,7 @@ def write_launcher(stage: Path) -> None:
 
 def make_zip(stage: Path) -> Path:
     out = ROOT / "dist" / f"RibbonFM-{version()}-windows-x86_64-portable.zip"
+    out.parent.mkdir(parents=True, exist_ok=True)
     print(f"Zipping to {out}")
     with zipfile.ZipFile(out, "w", zipfile.ZIP_DEFLATED) as zf:
         for path in sorted(stage.rglob("*")):
