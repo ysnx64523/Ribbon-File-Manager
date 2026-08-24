@@ -628,6 +628,36 @@ msgstr "路径"
 msgid "Permissions are not available."
 msgstr "无法获取权限信息。"
 
+msgid "Trash"
+msgstr "回收站"
+
+msgid "Restore"
+msgstr "还原"
+
+msgid "Empty Trash"
+msgstr "清空回收站"
+
+msgid "Not available in Trash"
+msgstr "回收站中不可用"
+
+msgid "This action is not available for items in the Trash."
+msgstr "回收站中的项目不支持此操作。"
+
+msgid "This file is in the Trash. Restore it to open it."
+msgstr "此文件已在回收站中，请先还原再打开。"
+
+msgid "Some items could not be restored"
+msgstr "部分项目无法还原"
+
+msgid "Empty the Trash?"
+msgstr "清空回收站？"
+
+msgid "All items in the Trash will be permanently deleted."
+msgstr "回收站中的所有项目将被永久删除。"
+
+msgid "Trash emptied."
+msgstr "回收站已清空。"
+
 msgid "Some items could not be dropped"
 msgstr "部分项目无法放入"
 

@@ -23,6 +23,14 @@ class NavigationMixin:
     # --- navigation ---------------------------------------------------------
 
     def navigate(self, path: str) -> None:
+        from ..core.files import is_trash
+        if is_trash(path):
+            if self._current and self._current != path:
+                self._history_back.append(self._current)
+                self._history_fwd.clear()
+            self._current = path
+            self._on_navigated_trash()
+            return
         path = self._canonicalize(path)
         if not os.path.isdir(path):
             from ..ui.dialogs import show_error
@@ -36,6 +44,16 @@ class NavigationMixin:
             self._history_fwd.clear()
         self._current = path
         self._on_navigated(path)
+
+    def _on_navigated_trash(self) -> None:
+        from .. import i18n
+        self.set_title(f"{self._app_title_text()} - {i18n._('Trash')}")
+        self._address.set_path(i18n._("Trash"))
+        self._update_nav_state()
+        hidden = getattr(self, "_file_view", None)
+        if hidden is not None and hasattr(hidden, "set_hide_paths"):
+            hidden.set_hide_paths([])
+        self._load_directory(self._current)
 
     def _canonicalize(self, path: str) -> str:
         try:

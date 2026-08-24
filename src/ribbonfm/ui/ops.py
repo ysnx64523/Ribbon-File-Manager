@@ -167,11 +167,102 @@ class FileOpsMixin:
             self.open_path(paths[0])
 
     def open_path(self, path: str) -> None:
+        if files.is_trash(path):
+            self._open_trash_item(path)
+            return
         entry = files.entry_for_path(path)
         if entry.is_dir:
             self.navigate(path)
         else:
             self.open_with_default(path)
+
+    def _open_trash_item(self, uri: str) -> None:
+        try:
+            entry = files.entry_for_uri(uri)
+        except Exception:
+            return
+        if entry.is_dir:
+            self.navigate(uri)
+        else:
+            from .dialogs import show_info
+            show_info(self, i18n._("Trash"),
+                      i18n._("This file is in the Trash. Restore it to open it."))
+
+    def restore(self) -> None:
+        """Restore the selected trashed items back to their original location."""
+        uris = self._file_view.selected_paths()
+        if not uris:
+            return
+
+        def work():
+            ok, errors = 0, []
+            for u in uris:
+                try:
+                    if files.restore(u):
+                        ok += 1
+                except Exception as exc:  # noqa: BLE001
+                    errors.append(f"{u}: {exc}")
+            return ok, errors
+
+        def done(res):
+            ok, errors = res
+            self.refresh()
+            if errors:
+                self._show_error(i18n._("Some items could not be restored"),
+                                 "\n".join(str(e) for e in errors[:5]))
+
+        call_async(work, on_done=done)
+
+    def trash_delete_permanent(self) -> None:
+        """Permanently delete the selected trashed items."""
+        from .dialogs import confirm
+        uris = self._file_view.selected_paths()
+        if not uris:
+            return
+        if not confirm(self, i18n._("Permanently delete {n} item(s)?").format(n=len(uris)),
+                       i18n._("This cannot be undone."), destructive=True):
+            return
+
+        def work():
+            ok, errors = 0, []
+            for u in uris:
+                try:
+                    files.trash_delete(u)
+                    ok += 1
+                except Exception as exc:  # noqa: BLE001
+                    errors.append(f"{u}: {exc}")
+            return ok, errors
+
+        def done(res):
+            ok, errors = res
+            self.refresh()
+            if errors:
+                self._show_error(i18n._("Some items could not be deleted"),
+                                 "\n".join(str(e) for e in errors[:5]))
+
+        call_async(work, on_done=done)
+
+    def empty_trash(self) -> None:
+        """Empty the whole Trash (permanent)."""
+        from .dialogs import confirm
+        if not confirm(self, i18n._("Empty the Trash?"),
+                       i18n._("All items in the Trash will be permanently deleted."),
+                       destructive=True):
+            return
+
+        def work():
+            return files.empty_trash()
+
+        def done(res):
+            ok, errors = res
+            self.refresh()
+            if errors:
+                self._show_error(i18n._("Some items could not be deleted"),
+                                 "\n".join(str(e) for e in errors[:5]))
+            else:
+                self._show_info(i18n._("Trash emptied."))
+
+        call_async(work, on_done=done)
 
     def open_with_default(self, path: str) -> None:
         try:

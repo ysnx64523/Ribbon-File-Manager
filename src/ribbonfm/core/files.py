@@ -17,6 +17,15 @@ from gi.repository import Gio, GLib
 
 from . import pathutils
 
+# Gio virtual location for the user's Trash (like the Windows Recycle Bin).
+TRASH_URI = "trash:///"
+
+
+def is_trash(location: str) -> bool:
+    """True if ``location`` is the virtual Trash URI."""
+    return location.startswith("trash://")
+
+
 # FileInfo attributes we pre-request when enumerating.
 _ATTRS = (
     Gio.FILE_ATTRIBUTE_STANDARD_NAME + "," +
@@ -60,28 +69,11 @@ class FileEntry:
     content_type: str
     symlink_target: str
     trashed: bool
+    orig_path: str = ""  # original path before being trashed ("" if not trashed)
 
     @property
     def is_file(self) -> bool:
         return not self.is_dir and not self.is_symlink
-
-    @property
-    def readable_writable(self) -> bool:
-        if not self.mode:
-            return True
-        return bool(self.mode & (stat.S_IRUSR | stat.S_IWUSR))
-
-    def pretty_permissions(self) -> str:
-        if self.mode == 0:
-            return ""
-        mode = self.mode
-        perms = [
-            mode & stat.S_IRUSR, mode & stat.S_IWUSR, mode & stat.S_IXUSR,
-            mode & stat.S_IRGRP, mode & stat.S_IWGRP, mode & stat.S_IXGRP,
-            mode & stat.S_IROTH, mode & stat.S_IWOTH, mode & stat.S_IXOTH,
-        ]
-        return "".join("-rwxrwxrwx"[(i - i % 3) * 0 + i] if p else "-"
-                       for i, p in enumerate(perms))
 
 
 def mode_to_rwx(mode: int) -> str:
@@ -139,9 +131,13 @@ def _entry_from_info(parent_path: str, info: Gio.FileInfo) -> FileEntry:
 def list_dir(path: str, show_hidden: bool = True) -> list[FileEntry]:
     """Synchronously enumerate ``path`` into a list of :class:`FileEntry`.
 
+    ``path`` may be a real filesystem path or the virtual ``trash://`` location.
+
     Raises :class:`Gio.Error` on permission problems; callers should present a
     friendly dialog.
     """
+    if is_trash(path):
+        return list_trash()
     parent = Gio.File.new_for_path(path)
     enumerator = parent.enumerate_children(_ATTRS, Gio.FileQueryInfoFlags.NONE)
     try:
@@ -154,6 +150,124 @@ def list_dir(path: str, show_hidden: bool = True) -> list[FileEntry]:
                 continue
             entries.append(entry)
         return entries
+    finally:
+        enumerator.close()
+
+
+# --- Trash (like the Windows Recycle Bin) -----------------------------------
+
+_TRASH_ATTRS = (
+    Gio.FILE_ATTRIBUTE_STANDARD_NAME + "," +
+    Gio.FILE_ATTRIBUTE_STANDARD_DISPLAY_NAME + "," +
+    Gio.FILE_ATTRIBUTE_STANDARD_TYPE + "," +
+    Gio.FILE_ATTRIBUTE_STANDARD_SIZE + "," +
+    Gio.FILE_ATTRIBUTE_TIME_MODIFIED + "," +
+    "trashed::orig-path" + "," +
+    "trashed::deletion-date" +
+    ""
+)
+
+
+def list_trash() -> list[FileEntry]:
+    """Enumerate the user's Trash. Each entry carries its ``trash://`` uri in
+    ``path``/``uri`` and the original location in ``orig_path``.
+
+    Returns ``[]`` when the platform/desktop has no Trash support rather than
+    raising, so the Trash view degrades gracefully.
+    """
+    base = Gio.File.new_for_uri(TRASH_URI)
+    try:
+        enumerator = base.enumerate_children(_TRASH_ATTRS,
+                                             Gio.FileQueryInfoFlags.NONE)
+    except Exception:  # noqa: BLE001 - no trash support (e.g. containers/CLI)
+        return []
+    try:
+        out: list[FileEntry] = []
+        for info in enumerator:
+            name = info.get_name()
+            child = base.get_child(name)
+            uri = child.get_uri()
+            out.append(
+                FileEntry(
+                    name=name,
+                    display_name=info.get_display_name(),
+                    path=uri,
+                    uri=uri,
+                    is_dir=info.get_file_type() == Gio.FileType.DIRECTORY,
+                    is_symlink=False,
+                    is_hidden=False,
+                    size=info.get_attribute_uint64(Gio.FILE_ATTRIBUTE_STANDARD_SIZE),
+                    mtime=int(info.get_attribute_uint64(
+                        Gio.FILE_ATTRIBUTE_TIME_MODIFIED)) or 0,
+                    mode=0,
+                    uid=0,
+                    gid=0,
+                    owner="",
+                    group="",
+                    content_type=info.get_content_type() or "",
+                    symlink_target="",
+                    trashed=True,
+                    orig_path=info.get_attribute_string("trashed::orig-path") or "",
+                )
+            )
+        return out
+    finally:
+        enumerator.close()
+
+
+def entry_for_uri(uri: str) -> FileEntry:
+    """Fetch a single :class:`FileEntry` for a ``trash://`` item."""
+    base = Gio.File.new_for_uri(TRASH_URI)
+    child = Gio.File.new_for_uri(uri)
+    info = child.query_info(_TRASH_ATTRS, Gio.FileQueryInfoFlags.NONE)
+    name = info.get_name()
+    return FileEntry(
+        name=name,
+        display_name=info.get_display_name(),
+        path=uri,
+        uri=uri,
+        is_dir=info.get_file_type() == Gio.FileType.DIRECTORY,
+        is_symlink=False,
+        is_hidden=False,
+        size=info.get_attribute_uint64(Gio.FILE_ATTRIBUTE_STANDARD_SIZE),
+        mtime=int(info.get_attribute_uint64(Gio.FILE_ATTRIBUTE_TIME_MODIFIED)) or 0,
+        mode=0, uid=0, gid=0, owner="", group="",
+        content_type=info.get_content_type() or "",
+        symlink_target="",
+        trashed=True,
+        orig_path=info.get_attribute_string("trashed::orig-path") or "",
+    )
+
+
+def restore(uri: str) -> bool:
+    """Restore a trashed item back to its original location."""
+    return Gio.File.new_for_uri(uri).untrash(None)
+
+
+def trash_delete(uri: str) -> None:
+    """Permanently delete a single trashed item."""
+    Gio.File.new_for_uri(uri).delete(None)
+
+
+def empty_trash() -> tuple[int, list[str]]:
+    """Permanently delete every item in the Trash.
+
+    Returns ``(ok_count, errors)``; ``errors`` are per-item messages.
+    """
+    base = Gio.File.new_for_uri(TRASH_URI)
+    enumerator = base.enumerate_children(
+        Gio.FILE_ATTRIBUTE_STANDARD_NAME, Gio.FileQueryInfoFlags.NONE)
+    try:
+        errors: list[str] = []
+        ok = 0
+        for info in enumerator:
+            child = base.get_child(info.get_name())
+            try:
+                child.delete(None)
+                ok += 1
+            except Exception as exc:  # noqa: BLE001
+                errors.append(f"{info.get_name()}: {exc}")
+        return ok, errors
     finally:
         enumerator.close()
 

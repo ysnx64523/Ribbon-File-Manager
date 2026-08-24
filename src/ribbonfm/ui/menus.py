@@ -73,6 +73,48 @@ def build_background_menu(current_path: str,
     return menu
 
 
+def build_trash_item_menu(path: str, dispatch: Callable[[str], None]) -> Gtk.Menu:
+    menu = Gtk.Menu()
+
+    def _act(action, label, icon=None):
+        item = Gtk.ImageMenuItem.new_with_label(label) if icon \
+            else Gtk.MenuItem(label=label)
+        if icon:
+            item.set_image(Gtk.Image.new_from_icon_name(icon, Gtk.IconSize.MENU))
+        item._action = action
+        item.connect("activate", lambda w: dispatch(w._action))
+        menu.append(item)
+
+    _act("restore", i18n._("Restore"), "edit-undo")
+    _act("trash_delete_permanent", i18n._("Delete Permanently"), "edit-delete")
+    menu.append(Gtk.SeparatorMenuItem())
+    _act("properties", i18n._("Properties"), "document-properties")
+    menu.show_all()
+    return menu
+
+
+def build_trash_background_menu(dispatch: Callable[[str], None]) -> Gtk.Menu:
+    menu = Gtk.Menu()
+
+    def _act(action, label, icon=None):
+        item = Gtk.ImageMenuItem.new_with_label(label) if icon \
+            else Gtk.MenuItem(label=label)
+        if icon:
+            item.set_image(Gtk.Image.new_from_icon_name(icon, Gtk.IconSize.MENU))
+        item._action = action
+        item.connect("activate", lambda w: dispatch(w._action))
+        menu.append(item)
+
+    _act("empty_trash", i18n._("Empty Trash"), "user-trash")
+    menu.append(Gtk.SeparatorMenuItem())
+    _act("select_all", i18n._("Select All"), "edit-select-all")
+    _act("invert_select", i18n._("Invert Selection"), "object-rotate-right")
+    menu.append(Gtk.SeparatorMenuItem())
+    _act("refresh", i18n._("Refresh"), "view-refresh")
+    menu.show_all()
+    return menu
+
+
 def popup(menu: Gtk.Menu, event) -> None:
     menu.show_all()
     menu.popup(None, None, None, None, event.button, event.time)

@@ -122,8 +122,10 @@ class MainWindow(Gtk.ApplicationWindow, NavigationMixin, FileOpsMixin):
                    on_error=self._on_dir_error)
 
     def _on_dir_loaded(self, entries) -> None:
-        entries = [e for e in entries if not
-                   (e.name.startswith(".") and not self._show_hidden)]
+        in_trash = files.is_trash(self._current)
+        if not in_trash:
+            entries = [e for e in entries if not
+                       (e.name.startswith(".") and not self._show_hidden)]
         if self._grouping:
             entries.sort(key=lambda e: (not e.is_dir, e.content_type or e.name))
         else:
@@ -133,6 +135,11 @@ class MainWindow(Gtk.ApplicationWindow, NavigationMixin, FileOpsMixin):
         self._file_view.set_sort_by(self._sort_mode, self._sort_ascending)
         self._file_view.set_show_hidden(self._show_hidden)
         self._update_status(total=len(entries))
+        if in_trash:
+            self._status_bar.set(
+                total=len(entries),
+                user=perm.current_user(), is_admin=perm.is_root() or perm.is_admin(),
+                location=i18n._("Trash"))
 
     def _on_dir_error(self, exc) -> None:
         from .dialogs import show_error
@@ -316,6 +323,14 @@ class MainWindow(Gtk.ApplicationWindow, NavigationMixin, FileOpsMixin):
                 self._toggle_extensions()
             return
 
+        # In the Trash, creation/clipboard actions are disabled (like Windows).
+        if files.is_trash(self._current) and action in (
+                "new_folder", "new_file", "cut", "copy", "paste", "rename",
+                "move_to", "copy_to", "pin_to_quick_access"):
+            show_info(self, i18n._("Not available in Trash"),
+                      i18n._("This action is not available for items in the Trash."))
+            return
+
         if action in _QUIET_TOGGLES:
             # Toggle-only / placeholder View buttons: their checked state already
             # flipped; do not pop a dialog.
@@ -353,6 +368,9 @@ class MainWindow(Gtk.ApplicationWindow, NavigationMixin, FileOpsMixin):
             "open_with": self.open_selection_with,
             "open_terminal": self.open_terminal,
             "open_terminal_admin": self._open_terminal_admin,
+            "restore": self.restore,
+            "empty_trash": self.empty_trash,
+            "trash_delete_permanent": self.trash_delete_permanent,
             "options": lambda: show_info(self, i18n._("Options"),
                                          i18n._("Options are not yet available.")),
             "help": self._help,
@@ -428,7 +446,12 @@ class MainWindow(Gtk.ApplicationWindow, NavigationMixin, FileOpsMixin):
     # --- context menu ------------------------------------------------------------------
 
     def _show_context_menu(self, path: str, on_item: bool) -> None:
-        if on_item and path:
+        if files.is_trash(self._current):
+            if on_item and path:
+                menu = menus.build_trash_item_menu(path, self.handle_action)
+            else:
+                menu = menus.build_trash_background_menu(self.handle_action)
+        elif on_item and path:
             menu = menus.build_item_menu(path, self._file_view.selected_paths(),
                                          self.handle_action)
         else:

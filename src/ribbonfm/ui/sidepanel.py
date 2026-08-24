@@ -83,6 +83,9 @@ class Sidebar:
 
     def refresh(self) -> None:
         self._model.clear()
+        # Trash is a top-level item (Windows-style Recycle Bin).
+        trash = self._model.append(None, ["user-trash", i18n._("Trash"),
+                                          "trash:///", _ITEM])
         self._build_section(i18n._("Places"), "user-home", self._places())
         self._build_section(i18n._("Bookmarks"), "user-bookmarks",
                             [(name, path, "user-bookmarks") for name, path

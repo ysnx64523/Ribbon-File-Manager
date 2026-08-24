@@ -235,6 +235,19 @@ TRANSLATIONS: dict[str, dict[str, str]] = {
         "(folder)": "（文件夹）",
         "Paste": "粘贴",
         "Refresh": "刷新",
+        "Trash": "回收站",
+        "Restore": "还原",
+        "Empty Trash": "清空回收站",
+        "Not available in Trash": "回收站中不可用",
+        "This action is not available for items in the Trash.":
+            "回收站中的项目不支持此操作。",
+        "This file is in the Trash. Restore it to open it.":
+            "此文件已在回收站中，请先还原再打开。",
+        "Some items could not be restored": "部分项目无法还原",
+        "Empty the Trash?": "清空回收站？",
+        "All items in the Trash will be permanently deleted.":
+            "回收站中的所有项目将被永久删除。",
+        "Trash emptied.": "回收站已清空。",
         "Pasted {n} item(s)": "已粘贴 {n} 个项目",
         "Some items could not be dropped": "部分项目无法放入",
         "Symbolic link to {t}": "指向 {t} 的符号链接",

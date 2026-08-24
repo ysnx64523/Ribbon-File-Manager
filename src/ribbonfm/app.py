@@ -12,6 +12,7 @@ gi.require_version("Gdk", "3.0")
 from gi.repository import Gtk, Gdk, Gio, GLib  # noqa: E402
 
 from . import config, i18n  # noqa: E402
+from .core import pathutils  # noqa: E402
 from .ui.mainwindow import MainWindow  # noqa: E402
 
 
@@ -40,23 +41,47 @@ class RibbonFMApp(Gtk.Application):
             print("Could not load dark CSS:", exc)
 
         self._system_prefers_dark()
-        settings = Gtk.Settings.get_default()
         try:
+            settings = Gtk.Settings.get_default()
             settings.connect("notify::gtk-application-prefer-dark-theme",
                              self._on_dark_setting_changed)
         except Exception:
             pass
-        # Follow OS theme changes live (gtk-theme / color-scheme).
+        # Follow OS theme changes live (gtk-theme / color-scheme); GSettings is a
+        # GNOME/X11 thing and is NOT available on Windows, so only use it there
+        # where the schema exists -- otherwise a native glib crash can occur.
+        if pathutils.IS_LINUX or pathutils.IS_MACOS:
+            try:
+                gs = Gio.Settings.new("org.gnome.desktop.interface")
+                gs.connect("changed::gtk-theme",
+                           lambda *_a: self._on_theme_changed())
+                gs.connect("changed::color-scheme",
+                           lambda *_a: self._on_theme_changed())
+            except Exception:
+                pass
+        # GTK3 has no reliable cross-desktop theme-change notification, so also
+        # poll the current preference to keep the theme in sync without restart.
         try:
-            gs = Gio.Settings.new("org.gnome.desktop.interface")
-            gs.connect("changed::gtk-theme", lambda *_a: self._on_theme_changed())
-            gs.connect("changed::color-scheme", lambda *_a: self._on_theme_changed())
+            GLib.timeout_add(1500, self._poll_theme)
         except Exception:
             pass
         self._apply_theme()
 
+    def _poll_theme(self) -> bool:
+        prev = self._dark
+        self._system_prefers_dark()
+        if prev != self._dark:
+            self._apply_theme()
+        return True  # keep polling
+
     def _detect_dark(self) -> bool:
-        """Whether the system is using a dark theme (best effort)."""
+        """Whether the system is using a dark theme.
+
+        Only reads *system* signals (never a value we set ourselves), so the
+        result cannot become self-reinforcing or stuck. Uses ``gtk-theme-name``
+        and ``GTK_THEME`` everywhere; ``Gio.Settings`` only on Linux/macOS where
+        the GNOME schema exists (it can crash glib natively on Windows).
+        """
         settings = Gtk.Settings.get_default()
         try:
             theme = (settings.get_property("gtk-theme-name") or "").lower()
@@ -64,16 +89,18 @@ class RibbonFMApp(Gtk.Application):
                 return True
         except Exception:
             pass
+        if pathutils.IS_LINUX or pathutils.IS_MACOS:
+            try:
+                gs = Gio.Settings.new("org.gnome.desktop.interface")
+                scheme = (gs.get_string("color-scheme") or "").lower()
+                if "dark" in scheme:
+                    return True
+                if (gs.get_string("gtk-theme") or "").lower().endswith("-dark"):
+                    return True
+            except Exception:
+                pass
         try:
-            gs = Gio.Settings.new("org.gnome.desktop.interface")
-            scheme = (gs.get_string("color-scheme") or "").lower()
-            if "dark" in scheme:
-                return True
-            if (gs.get_string("gtk-theme") or "").lower().endswith("-dark"):
-                return True
-        except Exception:
-            pass
-        try:
+            # Honor a value set by the desktop/user (read-only input).
             if bool(settings.get_property("gtk-application-prefer-dark-theme")):
                 return True
         except Exception:
@@ -81,14 +108,8 @@ class RibbonFMApp(Gtk.Application):
         return "dark" in os.environ.get("GTK_THEME", "").lower()
 
     def _system_prefers_dark(self) -> None:
-        """Detect the system color scheme and reflect it in GTK settings."""
-        dark = self._detect_dark()
-        try:
-            Gtk.Settings.get_default().set_property(
-                "gtk-application-prefer-dark-theme", dark)
-        except Exception:
-            pass
-        self._dark = dark
+        """Detect the system color scheme (does not write GTK settings back)."""
+        self._dark = self._detect_dark()
 
     def _on_theme_changed(self) -> None:
         self._system_prefers_dark()
