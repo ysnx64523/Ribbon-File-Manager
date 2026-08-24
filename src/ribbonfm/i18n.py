@@ -13,6 +13,7 @@ from __future__ import annotations
 import gettext
 import locale
 import os
+import sys
 from pathlib import Path
 from typing import Callable, Optional
 
@@ -110,12 +111,35 @@ def _install_system() -> str:
 
 
 def os_lang() -> str:
-    """Best effort host language detection."""
+    """Best effort host language detection.
+
+    On Windows the ``locale``/``LANG`` signals are unreliable, so prefer the
+    user's display language (``GetUserDefaultUILanguage``) mapped to a gettext
+    code (e.g. ``zh_CN``).
+    """
+    win = _windows_lang()
+    if win:
+        return win
     for var in ("LANGUAGE", "LC_ALL", "LC_MESSAGES", "LANG"):
         val = os.environ.get(var)
         if val:
             return val.split(":")[0].split(".")[0].replace("_", "-")
     return "en"
+
+
+def _windows_lang() -> Optional[str]:
+    """Return a gettext language code from the Windows UI language, or ``None``."""
+    if not sys.platform.startswith("win"):
+        return None
+    try:
+        import ctypes
+        langid = ctypes.windll.kernel32.GetUserDefaultUILanguage()
+        mapped = locale.windows_locale.get(int(langid))
+        if mapped:
+            return mapped.replace("-", "_")
+    except Exception:
+        return None
+    return None
 
 
 def init(language: Optional[str] = None) -> Callable[[str], str]:
