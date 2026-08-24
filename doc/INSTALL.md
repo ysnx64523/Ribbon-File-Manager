@@ -73,7 +73,7 @@ See [`pack/windows/README.md`](pack/windows/README.md) (MSYS2 + PyInstaller).
 Build a **portable, no-installer ZIP** that bundles the runtime:
 
 ```sh
-python pack/windows/build_portable.py # -> dist/RibbonFM-*-windows-x86_64.zip
+python pack/windows/build_portable.py # -> dist/RibbonFM-*-windows-x86_64-portable.zip
 ```
 
 ## macOS

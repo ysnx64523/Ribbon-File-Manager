@@ -107,7 +107,7 @@ python3 after `apt install python3-gi`.
 | --- | --- | --- |
 | Linux `.deb` (self-contained) | `build/deb/RibbonFM_*.deb` | `bash pack/linux/build_deb.sh` |
 | Linux `AppImage` | `dist/RibbonFileManager-*.AppImage` | `bash pack/appimage/build.sh` |
-| Windows portable ZIP | `dist/RibbonFM-*-windows-x86_64.zip` | `python pack/windows/build_portable.py` (MSYS2) |
+| Windows portable ZIP | `dist/RibbonFM-*-windows-x86_64-portable.zip` | `python pack/windows/build_portable.py` (MSYS2) |
 
 CI/CD (`.github/workflows/`):
 - `ci.yml` — lint (flake8), tests, Glade/compile validation.

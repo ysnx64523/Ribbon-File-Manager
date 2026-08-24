@@ -1,60 +1,49 @@
-# Windows packaging (MSYS2 + PyInstaller)
+# Windows packaging (MSYS2 runtime bundle, no pip)
 
-RibbonFM uses GTK3 via PyGObject. On Windows the cleanest way to bundle GTK is the
-**MSYS2** distribution, which ships a mingw64 GTK3 + Python build, then package
-with **PyInstaller** (or simply ship the venv).
+RibbonFM uses GTK3 via PyGObject. On Windows the GTK3 + PyGObject bindings come
+from **MSYS2** (pacman packages, e.g. `mingw-w64-ucrt-x86_64-python-gobject`).
+MSYS2's Python has **no pip** and PyPI does not provide ucrt64 wheels, so we do
+**not** use pip or PyInstaller. Instead we bundle a trimmed MSYS2 runtime plus
+the app and a `.bat` launcher into a self-contained portable ZIP.
 
-## TL;DR
+## Build
 
-1. Install MSYS2 from <https://www.msys2.org/>.
-2. Open the **MSYS2 UCRT64/MINGW64** shell and install the toolchain:
-
-   ```sh
-   pacman -S --needed base-devel mingw-w64-ucrt-x86_64-gtk3 \
-       mingw-w64-ucrt-x86_64-python mingw-w64-ucrt-x86_64-python-pip \
-       mingw-w64-ucrt-x86_64-gobject-introspection mingw-w64-ucrt-x86_64-python-gobject
-   ```
-
-3. Install the project and PyInstaller:
-
-   ```sh
-   python -m venv .venv
-   source .venv/Scripts/activate
-   pip install -e . pyinstaller
-   ```
-
-4. Build:
-
-   ```sh
-   pyinstaller pack/windows/ribbonfm.spec
-   ```
-
-   The binary appears in `dist/RibbonFM/`. Copy the MSYS2 `mingw64` runtime folder
-   (the RT DLLs, the `lib/girepository-1.0`, `lib/gtk-3.0`, `share` icon themes)
-   next to it, **or** run the app from within the MSYS2 shell so the runtime is
-   found on `PATH`.
-
-> GTK needs its runtime data on `PATH`/`GI_TYPELIB_PATH`. For a self-contained
-> folder use `gdk-pixbuf-query-loaders --update-cache` and copy the whole
-> `mingw64/{bin,lib,share}` tree. See the GTK-on-Windows docs.
-
-## UAC elevation
-
-The application **never runs as administrator**. Actions that need elevation
-(e.g. writing to `Program Files` or `C:\Windows`) are delegated to the helper
-under `pack/windows/runas_helper.py`, which is launched with the `runas` verb:
-
-```python
-import ctypes, os, sys
-from subprocess import Popen
-
-def elevate(args):
-    # ShellExecuteW with 'runas' shows the UAC prompt.
-    r = ctypes.windll.shell32.ShellExecuteW(
-        None, "runas", sys.executable, " ".join(args), None, 1)
-    if r <= 32:
-        raise OSError(f"elevation failed ({r})")
+```sh
+# In an MSYS2/mingw64 shell:
+python pack/windows/build_portable.py
+# -> dist/RibbonFM-<version>-windows-x86_64-portable.zip
 ```
 
-The helper performs a single, well-defined privileged action using the validated
-path passed on the command line. It exits immediately without keeping privileges.
+The script copies `bin`, `lib`, `share` from the active mingw64 prefix (the
+GTK3 runtime, Python, PyGObject typelibs, glib schemas, gdk-pixbuf loaders and
+the Adwaita icon theme), adds the app under `app/ribbonfm`, and writes a
+`RibbonFM.bat` launcher that sets `PATH`, `PYTHONPATH`, `GI_TYPELIB_PATH`,
+`GTK_DATA_PREFIX`, `XDG_DATA_DIRS`, `GIO_MODULE_DIR`, `GDK_PIXBUF_MODULE_FILE`
+and the fontconfig paths, then runs `python -m ribbonfm`.
+
+Unzip anywhere and double-click `RibbonFM.bat` (or run it from a terminal).
+
+## Installing the runtime with pacman
+
+Used by the CI `windows` job and by anyone building locally:
+
+```sh
+pacman -S --needed mingw-w64-x86_64-gtk3 \
+    mingw-w64-x86_64-python \
+    mingw-w64-x86_64-python-gobject \
+    mingw-w64-x86_64-adwaita-icon-theme \
+    mingw-w64-x86_64-gettext
+```
+
+`MINGW_PREFIX` (e.g. `/mingw64`) selects the runtime to copy; the script falls
+back to `/mingw64` and `C:/msys64/mingw64`.
+
+## Notes / limitations
+
+* The bundle is large (it ships the GTK runtime). It is genuinely portable and
+  self-contained — no MSYS2 install needed on the target machine.
+* The `ucrt64` target has **no pip**; that is exactly why the
+  pip/PyInstaller spec (`pack/windows/ribbonfm.spec`) is *not* used for the
+  release bundle. That spec is kept for an environment that does provide a
+  pip-capable CPython + PyGObject.
+* UAC elevation is delegated via `runas_helper.py` (see `doc/SECURITY.md`).

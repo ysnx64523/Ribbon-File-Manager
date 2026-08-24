@@ -54,16 +54,16 @@ jobs:
           install: >-
             mingw-w64-x86_64-gtk3
             mingw-w64-x86_64-python
-            mingw-w64-x86_64-python-pip
             mingw-w64-x86_64-python-gobject
-            mingw-w64-x86_64-pyinstaller
-      - name: Build portable ZIP
+            mingw-w64-x86_64-adwaita-icon-theme
+            mingw-w64-x86_64-gettext
+      - name: Build portable ZIP (bundled MSYS2 runtime, no pip)
         run: python pack/windows/build_portable.py
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: windows
-          path: dist/RibbonFM-*-windows-x86_64.zip
+          path: dist/RibbonFM-*-windows-x86_64-portable.zip
 
   release:
     needs: [linux, windows]
