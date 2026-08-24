@@ -27,12 +27,19 @@ APP_DIR = ROOT / "dist" / "RibbonFM"
 
 
 def version() -> str:
+    """Version from the git tag (``v1.6`` -> ``1.6``), e.g. for filenames."""
     try:
-        sys.path.insert(0, str(ROOT / "src"))
-        import ribbonfm
-        return ribbonfm.__version__
+        import subprocess
+        tag = subprocess.run(
+            ["git", "-C", str(ROOT), "describe", "--tags", "--abbrev=0"],
+            capture_output=True, text=True, check=True).stdout.strip()
+        if tag.startswith("v"):
+            tag = tag[1:]
+        if tag:
+            return tag
     except Exception:
-        return "0.1.0"
+        pass
+    return "0.1.0"
 
 
 def run_pyinstaller() -> None:

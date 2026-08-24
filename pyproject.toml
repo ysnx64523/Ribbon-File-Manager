@@ -1,10 +1,11 @@
 [build-system]
-requires = ["setuptools>=61"]
+requires = ["setuptools>=61", "setuptools_scm[toml]>=6.2"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "ribbonfm"
-version = "1.6"
+# Version is derived from the git tag via setuptools_scm (see [tool.setuptools_scm]).
+dynamic = ["version"]
 description = "A cross-platform Ribbon-style file manager built with PyGObject (GTK3)"
 readme = "README.md"
 license = { text = "Apache-2.0" }
@@ -38,6 +39,10 @@ package-dir = { "" = "src" }
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[tool.setuptools_scm]
+write_to = "ribbonfm/_version.py"
+fallback_version = "0.1.0"
 
 [tool.setuptools.package-data]
 ribbonfm = ["resources/ui/*.glade", "resources/css/*.css",

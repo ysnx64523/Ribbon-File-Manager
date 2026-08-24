@@ -5,7 +5,7 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
-VERSION="$(sed -n 's/^version = "\(.*\)"/\1/p' "$ROOT/pyproject.toml" | head -1)"
+VERSION="$(git -C "$ROOT" describe --tags --abbrev=0 2>/dev/null | sed 's/^v//')"
 [ -n "$VERSION" ] || VERSION="0.1.0"
 PKG_ID="org.ribbonfm.RibbonFM"
 OUT="$ROOT/build/deb"
