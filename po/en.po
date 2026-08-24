@@ -1,0 +1,504 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: ribbonfm 0.1.0\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: en\n"
+
+
+msgid "Project-Id-Version: PACKAGE VERSION\\nReport-Msgid-Bugs-To: \\nPOT-Creation-Date: 2026-08-23 20:45+0800\\nPO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\\nLast-Translator: FULL NAME <EMAIL@ADDRESS>\\nLanguage-Team: LANGUAGE <LL@li.org>\\nLanguage: \\nMIME-Version: 1.0\\nContent-Type: text/plain; charset=CHARSET\\nContent-Transfer-Encoding: 8bit\\n"
+msgstr ""
+
+msgid "pkexec is not available to elevate privileges."
+msgstr ""
+
+msgid "The privileged operation timed out."
+msgstr ""
+
+msgid "Failed to start the privileged helper: {err}"
+msgstr ""
+
+msgid "You cancelled the authentication request."
+msgstr ""
+
+msgid "The privileged operation was rejected: {msg}"
+msgstr ""
+
+msgid "runas escalation is not wired up in this build."
+msgstr ""
+
+msgid "osascript escalation is not wired up in this build."
+msgstr ""
+
+msgid "Privilege escalation is not supported on this platform."
+msgstr ""
+
+msgid "Could not change permissions: {err}"
+msgstr ""
+
+msgid "ribbon_collapse"
+msgstr "Collapse ribbon"
+
+msgid "Location: {loc}"
+msgstr ""
+
+msgid "{n} items"
+msgstr ""
+
+msgid "{n} selected"
+msgstr ""
+
+msgid "Free space: {size}"
+msgstr ""
+
+msgid "User: {user}"
+msgstr ""
+
+msgid "administrator"
+msgstr "Administrator"
+
+msgid "Read only"
+msgstr ""
+
+msgid "Places"
+msgstr ""
+
+msgid "Bookmarks"
+msgstr ""
+
+msgid "Devices"
+msgstr ""
+
+msgid "Network"
+msgstr ""
+
+msgid "Network locations"
+msgstr ""
+
+msgid "File system"
+msgstr ""
+
+msgid "Open"
+msgstr ""
+
+msgid "Add to bookmarks"
+msgstr ""
+
+msgid "Remove bookmark"
+msgstr ""
+
+msgid "Name"
+msgstr ""
+
+msgid "Type"
+msgstr ""
+
+msgid "Permissions"
+msgstr ""
+
+msgid "Owner"
+msgstr ""
+
+msgid "Group"
+msgstr ""
+
+msgid "Size"
+msgstr ""
+
+msgid "Modified"
+msgstr ""
+
+msgid "Open With..."
+msgstr ""
+
+msgid "Cut"
+msgstr ""
+
+msgid "Copy"
+msgstr ""
+
+msgid "Rename..."
+msgstr ""
+
+msgid "Move to Trash"
+msgstr ""
+
+msgid "Delete Permanently"
+msgstr ""
+
+msgid "Properties"
+msgstr ""
+
+msgid "New Folder"
+msgstr ""
+
+msgid "New File"
+msgstr ""
+
+msgid "Paste"
+msgstr ""
+
+msgid "Select All"
+msgstr ""
+
+msgid "Refresh"
+msgstr ""
+
+msgid "Location"
+msgstr ""
+
+msgid "Octal mode"
+msgstr ""
+
+msgid "This location is writable by all users or is managed with elevated privileges."
+msgstr ""
+
+msgid "Change permissions"
+msgstr ""
+
+msgid "Octal mode, e.g. 755"
+msgstr ""
+
+msgid "Invalid octal mode"
+msgstr ""
+
+msgid "Use a value such as 755."
+msgstr ""
+
+msgid "Permissions updated."
+msgstr ""
+
+msgid "Apply"
+msgstr ""
+
+msgid "Symbolic link to {target}"
+msgstr ""
+
+msgid "Folder"
+msgstr ""
+
+msgid "Drive"
+msgstr ""
+
+msgid "Symbolic link"
+msgstr ""
+
+msgid "File"
+msgstr ""
+
+msgid "(folder)"
+msgstr ""
+
+msgid "Cannot open folder"
+msgstr ""
+
+msgid "This location is not a readable directory: {path}"
+msgstr ""
+
+msgid "The folder could not be read. {err}"
+msgstr ""
+
+msgid "Not implemented yet"
+msgstr ""
+
+msgid "The '{action}' action is a placeholder."
+msgstr ""
+
+msgid "Some items were not pasted"
+msgstr ""
+
+msgid "Pasted {n} item(s)"
+msgstr ""
+
+msgid "Move {n} item(s) to Trash?"
+msgstr ""
+
+msgid "Some items could not be moved to Trash"
+msgstr ""
+
+msgid "Permanently delete {n} item(s)?"
+msgstr ""
+
+msgid "This cannot be undone."
+msgstr ""
+
+msgid "Some items could not be deleted"
+msgstr ""
+
+msgid "Rename"
+msgstr ""
+
+msgid "New name:"
+msgstr ""
+
+msgid "Rename failed"
+msgstr ""
+
+msgid "Folder name:"
+msgstr ""
+
+msgid "Could not create folder"
+msgstr ""
+
+msgid "File name:"
+msgstr ""
+
+msgid "New File.txt"
+msgstr ""
+
+msgid "Could not create file"
+msgstr ""
+
+msgid "Could not open this file"
+msgstr ""
+
+msgid "No application found"
+msgstr ""
+
+msgid "There is no registered application for this type."
+msgstr ""
+
+msgid "Could not open terminal"
+msgstr ""
+
+msgid "Language changed"
+msgstr ""
+
+msgid "Please restart the application for the change to take effect."
+msgstr ""
+
+msgid "ribbon_tab_home"
+msgstr "Home"
+
+msgid "ribbon_tab_file"
+msgstr "File"
+
+msgid "ribbon_tab_share"
+msgstr "Share"
+
+msgid "ribbon_tab_view"
+msgstr "View"
+
+msgid "ribbon_tab_manage"
+msgstr "Manage"
+
+msgid "group_new"
+msgstr "New"
+
+msgid "group_manage"
+msgstr "Manage"
+
+msgid "group_open"
+msgstr "Open"
+
+msgid "group_clipboard"
+msgstr "Clipboard"
+
+msgid "group_organize"
+msgstr "Organize"
+
+msgid "group_actions"
+msgstr "Actions"
+
+msgid "group_view"
+msgstr "View"
+
+msgid "group_sort"
+msgstr "Sort"
+
+msgid "group_filter"
+msgstr "Filter"
+
+msgid "group_system"
+msgstr "System"
+
+msgid "group_share"
+msgstr "Share"
+
+msgid "group_showhide"
+msgstr "Show/Hide"
+
+msgid "group_select"
+msgstr "Select"
+
+msgid "group_layout"
+msgstr "Layout"
+
+msgid "group_panes"
+msgstr "Panes"
+
+msgid "group_currentview"
+msgstr "Current view"
+
+msgid "group_options"
+msgstr "Options"
+
+msgid "new_folder"
+msgstr "New folder"
+
+msgid "new_file"
+msgstr "New file"
+
+msgid "new_item"
+msgstr "New"
+
+msgid "close"
+msgstr "Close"
+
+msgid "cut"
+msgstr "Cut"
+
+msgid "copy"
+msgstr "Copy"
+
+msgid "paste"
+msgstr "Paste"
+
+msgid "delete"
+msgstr "Delete"
+
+msgid "rename"
+msgstr "Rename"
+
+msgid "properties"
+msgstr "Properties"
+
+msgid "select_all"
+msgstr "Select all"
+
+msgid "select_none"
+msgstr "Select none"
+
+msgid "invert_select"
+msgstr "Invert selection"
+
+msgid "open"
+msgstr "Open"
+
+msgid "edit"
+msgstr "Edit"
+
+msgid "history"
+msgstr "History"
+
+msgid "options"
+msgstr "Options"
+
+msgid "help"
+msgstr "Help"
+
+msgid "refresh"
+msgstr "Refresh"
+
+msgid "view_large_icons"
+msgstr "Large icons"
+
+msgid "view_small_icons"
+msgstr "Small icons"
+
+msgid "view_list"
+msgstr "List"
+
+msgid "view_details"
+msgstr "Details"
+
+msgid "view_huge"
+msgstr "Extra large icons"
+
+msgid "view_large"
+msgstr "Large icons"
+
+msgid "view_medium"
+msgstr "Medium icons"
+
+msgid "view_tiles"
+msgstr "Tiles"
+
+msgid "view_content"
+msgstr "Content"
+
+msgid "sort_by"
+msgstr "Sort by"
+
+msgid "sort_by_name"
+msgstr "Sort by name"
+
+msgid "sort_by_size"
+msgstr "Sort by size"
+
+msgid "sort_by_type"
+msgstr "Sort by type"
+
+msgid "sort_by_mtime"
+msgstr "Sort by date modified"
+
+msgid "group_by"
+msgstr "Group by"
+
+msgid "group_by_type"
+msgstr "Group by type"
+
+msgid "add_columns"
+msgstr "Add columns"
+
+msgid "size_all_columns"
+msgstr "Size all columns to fit"
+
+msgid "show_hidden"
+msgstr "Show hidden files"
+
+msgid "item_checkboxes"
+msgstr "Item check boxes"
+
+msgid "file_extensions"
+msgstr "File name extensions"
+
+msgid "hidden_items"
+msgstr "Hidden items"
+
+msgid "hidden"
+msgstr "Hidden"
+
+msgid "selected_items"
+msgstr "Selected items"
+
+msgid "hide_selected"
+msgstr "Hide selected items"
+
+msgid "nav_pane"
+msgstr "Navigation pane"
+
+msgid "preview_pane"
+msgstr "Preview pane"
+
+msgid "details_pane"
+msgstr "Details pane"
+
+msgid "pin_to_quick_access"
+msgstr "Pin to Quick access"
+
+msgid "move_to"
+msgstr "Move to"
+
+msgid "copy_to"
+msgstr "Copy to"
+
+msgid "mount"
+msgstr "Mount"
+
+msgid "unmount"
+msgstr "Unmount"
+
+msgid "share"
+msgstr "Share"
+
+msgid "compress"
+msgstr "Compress"
+
+msgid "open_terminal"
+msgstr "Open Terminal"
+
+msgid "open_terminal_admin"
+msgstr "Open Terminal as Administrator"
+

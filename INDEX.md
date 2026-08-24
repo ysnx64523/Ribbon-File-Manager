@@ -100,7 +100,7 @@ user action → handle_action(action)
 | `src/ribbonfm/core/settings.py` | 44 | settings_path, load, get, save |
 | `src/ribbonfm/core/sorts.py` | 21 | make_key |
 | `src/ribbonfm/core/tasks.py` | 86 | call_async, _log_error, call_async_chain |
-| `src/ribbonfm/i18n.py` | 214 | _locale_dir, _discover, available_languages, current_language, _make_translator, _candidates, _install_system, os_lang, _windows_lang, _first_available, init, _activate, set_language |
+| `src/ribbonfm/i18n.py` | 217 | _locale_dir, _discover, available_languages, current_language, _make_translator, _candidates, _install_system, os_lang, _windows_lang, _first_available, init, _activate, set_language |
 | `src/ribbonfm/ui/__init__.py` | 7 | — |
 | `src/ribbonfm/ui/addressbar.py` | 95 | AddressBar |
 | `src/ribbonfm/ui/dialogs.py` | 90 | show_error, show_info, confirm, ask_text |
@@ -116,7 +116,7 @@ user action → handle_action(action)
 | `src/ribbonfm/ui/sidepanel.py` | 253 | Sidebar, _human_label |
 | `src/ribbonfm/ui/statusbar.py` | 73 | StatusBar, _n, format_size |
 | `tools/gen_index.py` | 155 | _symbols, _class_methods, _scan, _entry_points, _render, build, update, main |
-| `tools/gen_po.py` | 397 | _concat_msgid, _project_version, generate, _parse_quoted, _escape, compile_mo, _ensure_pot, main |
+| `tools/gen_po.py` | 481 | _concat_msgid, _project_version, generate, _parse_quoted, _escape, compile_mo, _ensure_pot, main |
 | `tests/test_core.py` | 127 | ModeTest, ListingTest, SortTest, PermTest, PathTest, I18nTest |
 
 ### Entry points

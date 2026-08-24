@@ -154,7 +154,10 @@ def _windows_lang() -> Optional[str]:
 
 
 def _first_available() -> Optional[str]:
-    """Return any bundled language (e.g. ``zh_CN``) or ``None``."""
+    """Return a bundled language to fall back to; prefer English, else any."""
+    for pref in ("en", "en_US", "en_GB"):
+        if pref in _available:
+            return pref
     return next(iter(_available), None)
 
 
