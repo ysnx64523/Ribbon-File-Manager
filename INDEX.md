@@ -88,9 +88,9 @@ user action → handle_action(action)
 
 | File | Lines | Symbols `defs`/`class` |
 | --- | ---: | --- |
-| `src/ribbonfm/__init__.py` | 11 | — |
+| `src/ribbonfm/__init__.py` | 21 | — |
 | `src/ribbonfm/__main__.py` | 6 | — |
-| `src/ribbonfm/app.py` | 71 | RibbonFMApp, main |
+| `src/ribbonfm/app.py` | 170 | RibbonFMApp, main |
 | `src/ribbonfm/config.py` | 43 | resources_dir |
 | `src/ribbonfm/core/__init__.py` | 1 | — |
 | `src/ribbonfm/core/files.py` | 252 | FileEntry, mode_to_rwx, _str_of, _uint_of, _entry_from_info, list_dir, entry_for_path, rename, make_directory, make_file, copy, move, delete_permanent, trash, set_permissions, set_owner, is_writable, is_readable, free_space, unique_path, resolve_symlink |
@@ -99,7 +99,7 @@ user action → handle_action(action)
 | `src/ribbonfm/core/perm.py` | 338 | UnsupportedError, PermHint, is_root, current_user, is_admin, _win_admin, _mode_str, inspect, _win_writable, can_no_privilege, _pkexec_ok, escalate, _escalate_tokens, chmod, chown, write_protected |
 | `src/ribbonfm/core/sorts.py` | 21 | make_key |
 | `src/ribbonfm/core/tasks.py` | 86 | call_async, _log_error, call_async_chain |
-| `src/ribbonfm/i18n.py` | 164 | _locale_dir, _discover, available_languages, current_language, _make_translator, _candidates, _install_system, os_lang, init, set_language |
+| `src/ribbonfm/i18n.py` | 165 | _locale_dir, _discover, available_languages, current_language, _make_translator, _candidates, _install_system, os_lang, init, set_language |
 | `src/ribbonfm/ui/__init__.py` | 7 | — |
 | `src/ribbonfm/ui/addressbar.py` | 95 | AddressBar |
 | `src/ribbonfm/ui/dialogs.py` | 90 | show_error, show_info, confirm, ask_text |
@@ -114,15 +114,15 @@ user action → handle_action(action)
 | `src/ribbonfm/ui/sidepanel.py` | 247 | Sidebar, _human_label |
 | `src/ribbonfm/ui/statusbar.py` | 73 | StatusBar, _n, format_size |
 | `tools/gen_index.py` | 155 | _symbols, _class_methods, _scan, _entry_points, _render, build, update, main |
-| `tools/gen_po.py` | 323 | _concat_msgid, generate, _parse_quoted, _escape, compile_mo, main |
-| `tests/test_core.py` | 110 | ModeTest, ListingTest, SortTest, PermTest, PathTest |
+| `tools/gen_po.py` | 375 | _concat_msgid, _project_version, generate, _parse_quoted, _escape, compile_mo, _ensure_pot, main |
+| `tests/test_core.py` | 127 | ModeTest, ListingTest, SortTest, PermTest, PathTest, I18nTest |
 
 ### Entry points
 - console script: ``ribbonfm`` -> ``ribbonfm.app:main``
 - ``python -m ribbonfm`` (via src/ribbonfm/__main__.py)
 
 ### Notable methods
-- `src/ribbonfm/app.py`: RibbonFMApp.__init__, RibbonFMApp._apply_css, RibbonFMApp.do_activate, RibbonFMApp._create_window, RibbonFMApp.reload_language
+- `src/ribbonfm/app.py`: RibbonFMApp.__init__, RibbonFMApp._init_theme, RibbonFMApp._detect_dark, RibbonFMApp._system_prefers_dark, RibbonFMApp._on_theme_changed, RibbonFMApp._on_dark_setting_changed, RibbonFMApp._apply_theme, RibbonFMApp._add_system_icon_paths, RibbonFMApp.do_activate, RibbonFMApp._create_window, RibbonFMApp.reload_language
 - `src/ribbonfm/core/files.py`: FileEntry.is_file, FileEntry.readable_writable, FileEntry.pretty_permissions
 - `src/ribbonfm/core/mounts.py`: MountInfo.is_valid
 - `src/ribbonfm/core/perm.py`: PermHint.warning
@@ -135,6 +135,6 @@ user action → handle_action(action)
 - `src/ribbonfm/ui/ribbon.py`: Ribbon.__init__, Ribbon.build, Ribbon._build_file_backstage, Ribbon._add_menu_item, Ribbon._build_quick_access, Ribbon._build_collapse_toggle, Ribbon._on_collapse_toggled, Ribbon.collapsed, Ribbon.set_checked, Ribbon._apply_check
 - `src/ribbonfm/ui/sidepanel.py`: Sidebar.__init__, Sidebar._load_bookmarks, Sidebar._save_bookmarks, Sidebar.refresh, Sidebar._build_devices, Sidebar._places, Sidebar._build_section, Sidebar._on_activated, Sidebar._activate_token, Sidebar._on_mount_done, Sidebar._on_button_press, Sidebar._show_context_menu, Sidebar.add_bookmark, Sidebar.remove_bookmark
 - `src/ribbonfm/ui/statusbar.py`: StatusBar.__init__, StatusBar._clear, StatusBar.set
-- `tests/test_core.py`: ModeTest.test_rwx_conversion, ModeTest.test_perm_mode_str, ListingTest.setUp, ListingTest.tearDown, ListingTest.test_list_dir_returns_entries, ListingTest.test_show_hidden, ListingTest.test_dir_flags, ListingTest.test_entry_for_path, SortTest.test_dirs_first_key, PermTest.setUp, PermTest.tearDown, PermTest.test_inspect_readable, PermTest.test_is_admin_false_non_root, PathTest.test_home, PathTest.test_free_space_positive
+- `tests/test_core.py`: ModeTest.test_rwx_conversion, ModeTest.test_perm_mode_str, ListingTest.setUp, ListingTest.tearDown, ListingTest.test_list_dir_returns_entries, ListingTest.test_show_hidden, ListingTest.test_dir_flags, ListingTest.test_entry_for_path, SortTest.test_dirs_first_key, PermTest.setUp, PermTest.tearDown, PermTest.test_inspect_readable, PermTest.test_is_admin_false_non_root, PathTest.test_home, PathTest.test_free_space_positive, I18nTest.test_zh_cn_resolves, I18nTest.test_locale_discovered
 
 <!-- @@INVENTORY:END@@ -->

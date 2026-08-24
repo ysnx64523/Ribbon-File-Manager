@@ -231,6 +231,31 @@ TRANSLATIONS: dict[str, dict[str, str]] = {
         "Language changed": "语言已更改",
         "Please restart the application for the change to take effect.":
             "请重启应用程序以使更改生效。",
+        # Remaining visible strings found by the i18n audit
+        "(folder)": "（文件夹）",
+        "Paste": "粘贴",
+        "Refresh": "刷新",
+        "Pasted {n} item(s)": "已粘贴 {n} 个项目",
+        "Some items could not be dropped": "部分项目无法放入",
+        "Symbolic link to {t}": "指向 {t} 的符号链接",
+        "New File.txt": "新建文件.txt",
+        "Could not change permissions: {err}": "无法更改权限：{err}",
+        "Failed to start the privileged helper: {err}": "无法启动提权助手：{err}",
+        "Privilege escalation is not supported on this platform.":
+            "此平台不支持权限提升。",
+        "The '{action}' action is a placeholder.": "“{action}”操作仅为占位符。",
+        "The folder could not be read. {err}": "无法读取该文件夹。{err}",
+        "The privileged operation timed out.": "提权操作超时。",
+        "The privileged operation was rejected: {msg}": "提权操作被拒绝：{msg}",
+        "This location is not a readable directory: {path}":
+            "此位置不是可读目录：{path}",
+        "This would open a terminal with elevated privileges.":
+            "这将以提权身份打开终端。",
+        "You cancelled the authentication request.": "您取消了身份验证请求。",
+        "osascript escalation is not wired up in this build.":
+            "此构建未接入 osascript 提权。",
+        "pkexec is not available to elevate privileges.": "系统没有 pkexec，无法提权。",
+        "runas escalation is not wired up in this build.": "此构建未接入 runas 提权。",
     },
 }
 

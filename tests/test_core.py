@@ -108,3 +108,20 @@ class PathTest(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class I18nTest(unittest.TestCase):
+    def test_zh_cn_resolves(self):
+        from ribbonfm import i18n
+        i18n.set_language("zh-CN")
+        checked = {
+            "New Folder": "新建文件夹", "Paste": "粘贴", "Refresh": "刷新",
+            "Properties": "属性", "Open": "打开", "ribbon_tab_home": "主页",
+            "General": "常规",
+        }
+        for msgid, zh in checked.items():
+            self.assertEqual(i18n._(msgid), zh, f"{msgid} 未正确翻译")
+
+    def test_locale_discovered(self):
+        from ribbonfm import i18n
+        self.assertIn("zh_CN", i18n.available_languages())
