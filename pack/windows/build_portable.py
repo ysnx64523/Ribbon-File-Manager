@@ -44,6 +44,9 @@ def version() -> str:
 
 def run_pyinstaller() -> None:
     print("Running PyInstaller ...")
+    # Emit the version for the packaged app (PyInstaller doesn't run setuptools_scm).
+    (ROOT / "src" / "ribbonfm" / "_version.py").write_text(
+        f'__version__ = "{version()}"\n', encoding="utf-8")
     subprocess.run([sys.executable, "-m", "PyInstaller", str(SPEC)],
                    cwd=str(ROOT), check=True)
 

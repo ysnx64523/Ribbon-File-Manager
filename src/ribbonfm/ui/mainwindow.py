@@ -391,12 +391,12 @@ class MainWindow(Gtk.ApplicationWindow, NavigationMixin, FileOpsMixin):
                   i18n._("This would open a terminal with elevated privileges."))
 
     def _help(self) -> None:
-        from gi.repository import GdkPixbuf
+        from gi.repository import GdkPixbuf  # noqa: F401
         try:
             dialog = Gtk.AboutDialog(
                 transient_for=self,
                 program_name=config.APP_NAME,
-                version="0.1.0",
+                version=_app_version(),
                 comments=i18n._("A cross-platform Ribbon-style file manager."),
                 license_type=Gtk.License.APACHE_2_0,
                 website="https://github.com/ysnx64523/Ribbon-File-Manager",
@@ -440,6 +440,15 @@ class MainWindow(Gtk.ApplicationWindow, NavigationMixin, FileOpsMixin):
 # Keep default state attributes available (set by mixins at runtime).
 MainWindow._sort_mode = "name"
 MainWindow._sort_ascending = True
+
+
+def _app_version() -> str:
+    """Current app version, derived from the git tag (see ribbonfm.__version__)."""
+    try:
+        from .. import __version__
+        return str(__version__)
+    except Exception:
+        return "0.0.0"
 
 
 def _size_human(size: int) -> str:

@@ -104,7 +104,7 @@ user action → handle_action(action)
 | `src/ribbonfm/ui/addressbar.py` | 95 | AddressBar |
 | `src/ribbonfm/ui/dialogs.py` | 90 | show_error, show_info, confirm, ask_text |
 | `src/ribbonfm/ui/fileview.py` | 615 | _icon_for, _size_str, _icon_pixbuf, format_size, FileView, _path_of, _iters, _fmt_time |
-| `src/ribbonfm/ui/mainwindow.py` | 460 | MainWindow, _size_human, _ts |
+| `src/ribbonfm/ui/mainwindow.py` | 469 | MainWindow, _app_version, _size_human, _ts |
 | `src/ribbonfm/ui/menus.py` | 78 | build_item_menu, build_background_menu, popup |
 | `src/ribbonfm/ui/navigation.py` | 116 | NavigationMixin |
 | `src/ribbonfm/ui/ops.py` | 362 | FileOpsMixin |
