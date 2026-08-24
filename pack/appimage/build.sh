@@ -4,7 +4,8 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
-VERSION="$(git -C "$ROOT" describe --tags --abbrev=0 2>/dev/null | sed 's/^v//')"
+VERSION="$(printf '%s' "${GITHUB_REF_NAME:-}" | sed 's/^v//')"
+[ -n "$VERSION" ] || VERSION="$(git -C "$ROOT" describe --tags --abbrev=0 2>/dev/null | sed 's/^v//')"
 [ -n "$VERSION" ] || VERSION="0.1.0"
 # Emit the version for the packaged app (PyInstaller doesn't run setuptools_scm).
 printf '__version__ = "%s"\n' "$VERSION" > "$ROOT/src/ribbonfm/_version.py"

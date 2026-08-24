@@ -29,6 +29,15 @@ APP = ROOT / "src" / "ribbonfm"
 
 
 def version() -> str:
+    """Version for filenames, from the release tag if present.
+
+    Prefers ``GITHUB_REF_NAME`` (``v1.8`` -> ``1.8``) which is set by GitHub
+    Actions for the released tag; ``git describe --tags`` works too but needs
+    tags fetched by the checkout step (default checkout only fetches the commit).
+    """
+    ref = os.environ.get("GITHUB_REF_NAME", "")
+    if ref.startswith("v"):
+        return ref[1:]
     try:
         tag = subprocess.run(
             ["git", "-C", str(ROOT), "describe", "--tags", "--abbrev=0"],
