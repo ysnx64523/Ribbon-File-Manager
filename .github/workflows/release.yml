@@ -25,6 +25,10 @@ jobs:
           curl -L -o /usr/local/bin/appimagetool \
             https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage
           chmod +x /usr/local/bin/appimagetool
+      - name: Verify git tag feeds the version
+        run: |
+          echo "TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo none)"
+          git describe --tags --abbrev=0 2>/dev/null | sed 's/^v//'
       - name: Build .deb
         run: bash pack/linux/build_deb.sh
       - name: Build AppImage
