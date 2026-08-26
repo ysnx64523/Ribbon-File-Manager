@@ -90,7 +90,7 @@ user action → handle_action(action)
 | --- | ---: | --- |
 | `src/ribbonfm/__init__.py` | 21 | — |
 | `src/ribbonfm/__main__.py` | 6 | — |
-| `src/ribbonfm/app.py` | 210 | RibbonFMApp, main |
+| `src/ribbonfm/app.py` | 221 | RibbonFMApp, main |
 | `src/ribbonfm/config.py` | 43 | resources_dir |
 | `src/ribbonfm/core/__init__.py` | 1 | — |
 | `src/ribbonfm/core/files.py` | 366 | is_trash, FileEntry, mode_to_rwx, _str_of, _uint_of, _entry_from_info, list_dir, list_trash, entry_for_uri, restore, trash_delete, empty_trash, entry_for_path, rename, make_directory, make_file, copy, move, delete_permanent, trash, set_permissions, set_owner, is_writable, is_readable, free_space, unique_path, resolve_symlink |

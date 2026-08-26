@@ -118,8 +118,19 @@ class RibbonFMApp(Gtk.Application):
         return "dark" in os.environ.get("GTK_THEME", "").lower()
 
     def _system_prefers_dark(self) -> None:
-        """Detect the system color scheme (does not write GTK settings back)."""
+        """Recompute ``self._dark`` and reflect it into native GTK widgets.
+
+        For an explicit light/dark override the ``gtk-application-prefer-dark-theme``
+        setting is *also* written so native widgets (list, sidebar, tab strip)
+        follow; on "system" we leave it to the desktop and only read signals.
+        """
         self._dark = self._detect_dark()
+        if getattr(self, "_theme_override", "system") in ("light", "dark"):
+            try:
+                Gtk.Settings.get_default().set_property(
+                    "gtk-application-prefer-dark-theme", self._dark)
+            except Exception:
+                pass
 
     def _on_theme_changed(self) -> None:
         self._system_prefers_dark()
