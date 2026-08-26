@@ -90,7 +90,7 @@ user action → handle_action(action)
 | --- | ---: | --- |
 | `src/ribbonfm/__init__.py` | 21 | — |
 | `src/ribbonfm/__main__.py` | 6 | — |
-| `src/ribbonfm/app.py` | 221 | RibbonFMApp, main |
+| `src/ribbonfm/app.py` | 232 | RibbonFMApp, main |
 | `src/ribbonfm/config.py` | 43 | resources_dir |
 | `src/ribbonfm/core/__init__.py` | 1 | — |
 | `src/ribbonfm/core/files.py` | 366 | is_trash, FileEntry, mode_to_rwx, _str_of, _uint_of, _entry_from_info, list_dir, list_trash, entry_for_uri, restore, trash_delete, empty_trash, entry_for_path, rename, make_directory, make_file, copy, move, delete_permanent, trash, set_permissions, set_owner, is_writable, is_readable, free_space, unique_path, resolve_symlink |
@@ -112,7 +112,7 @@ user action → handle_action(action)
 | `src/ribbonfm/ui/propsdialog.py` | 291 | PropertiesDialog, _size_human |
 | `src/ribbonfm/ui/ribbon.py` | 313 | _large_button, _small_button, _on_click, _group_widget, Ribbon |
 | `src/ribbonfm/ui/ribbon_spec.py` | 143 | _btn, _group |
-| `src/ribbonfm/ui/settings.py` | 79 | SettingsDialog |
+| `src/ribbonfm/ui/settings.py` | 73 | SettingsDialog |
 | `src/ribbonfm/ui/sidepanel.py` | 253 | Sidebar, _human_label |
 | `src/ribbonfm/ui/statusbar.py` | 73 | StatusBar, _n, format_size |
 | `tools/gen_index.py` | 155 | _symbols, _class_methods, _scan, _entry_points, _render, build, update, main |
@@ -124,7 +124,7 @@ user action → handle_action(action)
 - ``python -m ribbonfm`` (via src/ribbonfm/__main__.py)
 
 ### Notable methods
-- `src/ribbonfm/app.py`: RibbonFMApp.__init__, RibbonFMApp._init_theme, RibbonFMApp._poll_theme, RibbonFMApp._detect_dark, RibbonFMApp._system_prefers_dark, RibbonFMApp._on_theme_changed, RibbonFMApp._on_dark_setting_changed, RibbonFMApp._apply_theme, RibbonFMApp._add_system_icon_paths, RibbonFMApp.apply_theme_override, RibbonFMApp.set_language, RibbonFMApp.do_activate, RibbonFMApp._create_window, RibbonFMApp.reload_language
+- `src/ribbonfm/app.py`: RibbonFMApp.__init__, RibbonFMApp._init_theme, RibbonFMApp._poll_theme, RibbonFMApp._detect_dark, RibbonFMApp._system_prefers_dark, RibbonFMApp._on_theme_changed, RibbonFMApp._on_dark_setting_changed, RibbonFMApp._apply_theme, RibbonFMApp._add_system_icon_paths, RibbonFMApp.apply_theme_override, RibbonFMApp.set_language, RibbonFMApp.apply_language, RibbonFMApp.do_activate, RibbonFMApp._create_window, RibbonFMApp.reload_language
 - `src/ribbonfm/core/files.py`: FileEntry.is_file
 - `src/ribbonfm/core/mounts.py`: MountInfo.is_valid
 - `src/ribbonfm/core/perm.py`: PermHint.warning

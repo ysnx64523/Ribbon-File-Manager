@@ -186,6 +186,17 @@ class RibbonFMApp(Gtk.Application):
         """Activate a gettext language selected in Settings."""
         i18n.set_language(lang)
 
+    def apply_language(self, lang: str) -> None:
+        """Switch language and rebuild the UI so it takes effect immediately."""
+        i18n.set_language(lang)
+        old = self._window
+        path = getattr(old, "_current", None) or self._start_path or str(Path.home())
+        new = MainWindow(self, path)
+        self._window = new
+        if old is not None:
+            old.destroy()
+        new.present()
+
     def do_activate(self, *_):
         window = self.props.active_window
         if not window:

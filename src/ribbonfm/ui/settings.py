@@ -6,7 +6,6 @@ from gi.repository import Gtk
 
 from .. import i18n
 from ..core import settings as app_settings
-from .dialogs import show_info
 
 
 class SettingsDialog:
@@ -52,28 +51,23 @@ class SettingsDialog:
         theme_combo.set_active_id(self._theme)
         grid.attach(theme_combo, 1, 1, 1, 1)
 
-        note = Gtk.Label(label=i18n._(
-            "Language changes take effect after restarting the application."))
-        note.set_line_wrap(True)
-        note.set_xalign(0)
-        note.get_style_context().add_class("security-note")
-        area.pack_start(note, False, False, 8)
-
         dialog.show_all()
         if dialog.run() != Gtk.ResponseType.OK:
             dialog.destroy()
             return
-        dialog.destroy()
-
+        # Read the chosen values BEFORE destroying the dialog (its combo boxes
+        # are children and would be unanchored otherwise).
         new_lang = lang_combo.get_active_id()
         new_theme = theme_combo.get_active_id()
-        app_settings.save({"lang": new_lang or "", "theme": new_theme or "system"})
+        dialog.destroy()
+
+        lang_code = "" if not new_lang or new_lang == "system" else new_lang
+        app_settings.save({"lang": lang_code,
+                           "theme": new_theme or "system"})
 
         if new_theme and new_theme != self._theme and self._app is not None:
             self._app.apply_theme_override(new_theme)
 
-        if new_lang and new_lang != "system" and new_lang != self._lang:
-            self._app.set_language(new_lang) if self._app else None
-            show_info(self._parent, i18n._("Language changed"),
-                      i18n._("Please restart the application for the change "
-                             "to take effect."))
+        if lang_code and lang_code != self._lang and self._app is not None:
+            # Rebuild the UI so the language switch takes effect immediately.
+            self._app.apply_language(lang_code)
